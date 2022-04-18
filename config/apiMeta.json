@@ -1,0 +1,17 @@
+{
+  "com.zhipin.bosshi.nodeapi.TestNodeService": {
+    "appName": "bosshi_chat",
+    "canonicalName": "com.zhipin.bosshi.nodeapi.TestNodeService",
+    "codeSource": "bosshi_chat-facade-1.0.0.jar",
+    "methods": [
+      {
+        "name": "echoUser",
+        "parameterTypes": [
+          "java.lang.String"
+        ],
+        "returnType": "java.lang.String"
+      }
+    ],
+    "classMaps": {}
+  }
+}
