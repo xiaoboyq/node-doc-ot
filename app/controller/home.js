@@ -1,7 +1,7 @@
 "use strict";
 
 const Controller = require("egg").Controller;
-const MessageDB = require("../../messageDB");
+const MessageDB = require("../../lib/db/messageDB");
 
 const SlateOt = require("slate-ot");
 const slateType = SlateOt.slateType;
