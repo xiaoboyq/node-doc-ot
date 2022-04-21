@@ -13,6 +13,7 @@ const events = require("events");
 // const ws = new events.EventEmitter();
 const util = require("util");
 const { default: axios } = require("axios");
+const AgentPubSub = require("../../lib/pubsub/agentPubsub");
 
 let backend = null;
 
@@ -117,6 +118,7 @@ class HomeController extends Controller {
       backend = new ShareDB({
         presence: true,
         db: new MessageDB({}, this.app),
+        pubsub: new AgentPubSub(this.app),
       });
       setInitDoc();
     }
