@@ -28,8 +28,9 @@ module.exports = appInfo => {
       address: '192.168.20.157:2181/zp_dubbo/bosshi', // configure your real zk address
       protocol: 'dubbo',
     },
+    // 接口的命名空间，所有的暴露的接口默认都在该命名空间下
     server: {
-      namespace: 'com.zhipin.bosshi.nodeapi',
+      namespace: 'com.zhipin.zhishu.nodeapi',
     },
     client: {
       responseTimeout: 3000,

@@ -1,12 +1,22 @@
 {
-  "com.zhipin.bosshi.nodeapi.TestNodeService": {
+  "com.zhipin.zhishu.nodeapi.OTService": {
     "appName": "bosshi_chat",
-    "canonicalName": "com.zhipin.bosshi.nodeapi.TestNodeService",
+    "canonicalName": "com.zhipin.zhishu.nodeapi.OTService",
     "codeSource": "bosshi_chat-facade-1.0.0.jar",
     "methods": [
       {
-        "name": "echoUser",
+        "name": "receive",
         "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String"
+        ],
+        "returnType": "java.lang.String"
+      },
+      {
+        "name": "leave",
+        "parameterTypes": [
+          "java.lang.String",
           "java.lang.String"
         ],
         "returnType": "java.lang.String"
