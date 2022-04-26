@@ -24,6 +24,7 @@ module.exports = appInfo => {
   };
 
   config.rpc = {
+    // 配置服务发现
     registry: {
       address: '192.168.20.157:2181/zp_dubbo/bosshi', // configure your real zk address
       protocol: 'dubbo',

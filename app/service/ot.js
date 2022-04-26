@@ -22,15 +22,7 @@ class OTServer extends Service {
       this.logger.info('[listen] 挂载实例 pid = ', process.pid, ' userId, docId = ', userId, docId);
       this.app.backend.listen(mockStream);
     }
-
-    // init Doc
-    const connection = this.app.backend.connect();
-    const doc = Promise.promisifyAll(connection.get(collection, docId));
-    await doc.fetchAsync();
-    if (doc.type === null) {
-      this.logger.info('[listen] initDoc pid = ', process.pid, ' userId, docId = ', userId, docId);
-      await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
-    }
+    // await this.initDoc({ collection, docId });
   }
   // 销毁客户端连接
   async leave({ userId, collection, docId }) {
@@ -50,6 +42,20 @@ class OTServer extends Service {
     } else {
       this.logger.error('[emitMessage] 本机未订阅该客户端 userId, docId = ', userId, docId, 'pid = ', process.pid);
       this.logger.error('[emitMessage] 忽略该条消息 op = ', JSON.stringify(op), 'pid = ', process.pid);
+    }
+  }
+  // 初始化文档内容
+  async initDoc({ collection, docId }) {
+    const connection = this.app.backend.connect();
+    const doc = Promise.promisifyAll(connection.get(collection, docId));
+    try {
+      await doc.fetchAsync();
+      if (doc.type === null) {
+        this.logger.info('[initDoc] 初始化doc成功 pid = ', process.pid, ' docId = ', docId);
+        await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
+      }
+    } catch (error) {
+      this.logger.error('[initDoc] 初始化doc失败 pid = ', process.pid, ' docId = ', docId, error);
     }
   }
 }

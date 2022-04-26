@@ -1,5 +1,5 @@
 'use strict';
-
+// 配置要调用的JAVA接口
 module.exports = {
   services: [{
     appName: 'bosshi_chat',

@@ -1,4 +1,4 @@
-package com.zhipin.bosshi.nodeapi;
+package com.zhipin.zhishu.nodeapi;
 
 public class NodeTRException extends Exception {
   public NodeTRException() {}

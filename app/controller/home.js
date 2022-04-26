@@ -40,9 +40,10 @@ class HomeController extends Controller {
     const op = this.ctx.request.body.data;
     const { userId, collection, docId } = this.ctx.request.body;
     const combineId = collection + docId;
-    // if (op.a === 'hs') {
-    //   await this.service.ot.listen({ userId, collection, docId });
-    // }
+    if (op.a === 'hs') {
+      await this.service.ot.listen({ userId, collection, docId });
+      await this.service.ot.initDoc({ collection, docId });
+    }
     if (combineId in this.app.wsMap && this.app.wsMap[combineId][userId]) {
       this.app.wsMap[collection + docId][userId].ws.emit("message", op);
     }
