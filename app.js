@@ -1,8 +1,9 @@
 "use strict";
 
 const sharedb = require("sharedb");
-const MessageDB = require("./lib/db/messageDB");
-const AgentPubSub = require("./lib/pubsub/agentPubsub");
+// const DubboDB = require("./lib/db/DubboDB");
+const Dubbo = require('./lib/dubbo');
+// const AgentPubSub = require("./lib/pubsub/agentPubsub");
 
 module.exports = app => {
   app.messenger.on("test_action", data => {
@@ -11,13 +12,14 @@ module.exports = app => {
 
   // 用于存储 订阅 DOC 的 stream 对象
   // key: collection + docId
-  // value: stream
+  // value: key: userId  value: stream
   app.wsMap = {};
+  app.dubbo = Dubbo;
   // shareDB 实例
   app.backend = new sharedb({
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
-    db: new MessageDB({}, app),
-    pubsub: new AgentPubSub(app),
+    // db: new DubboDB(app),
+    // pubsub: new AgentPubSub(app),
   });
 };

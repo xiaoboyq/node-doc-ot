@@ -1,10 +1,5 @@
 'use strict';
 
-exports.echoUser = async function(user) {
-  console.log(user);
-  return user;
-};
-
 /**
  * node OT dubbo 文档： https://wiki.kanzhun-inc.com/display/821/Node+OT
  */
@@ -32,8 +27,18 @@ exports.receive = async function(docId, userId, data) {
     }
   } catch (error) {
     this.logger.error('[dubbo] [receive] ', error);
+    return 'false';
   }
   return 'true';
+};
+/**
+ * 创建文件
+ * @param {string} docId 文档ID
+ */
+exports.create = async function(docId) {
+  this.logger.info('[dubbo] [create] 初始化文档 pid = ', process.pid, docId);
+  const success = await this.service.ot.initDoc({ collection: COLLECTION, docId });
+  return success ? 'true' : 'false';
 };
 
 /**

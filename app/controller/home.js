@@ -22,20 +22,6 @@ console.log("testssssss");
 class HomeController extends Controller {
   // 处理 op
   async index() {
-    // const { ctx } = this;
-    // const res = await ctx.dubbo.MqttChatApi.demo(11, 22);
-    // console.log(res);
-    // ctx.body = res;
-
-    // if (!backend) {
-    // console.log('\x1B[36m 初始化实例 ===== \x1B[0m', process.pid);
-    // backend = new ShareDB({
-    //   presence: true,
-    //   db: new MessageDB({}, this.app),
-    //   // pubsub: new AgentPubSub(this.app),
-    // });
-    // setInitDoc();
-    // }
 
     const op = this.ctx.request.body.data;
     const { userId, collection, docId } = this.ctx.request.body;
@@ -99,7 +85,34 @@ class HomeController extends Controller {
 
   async indexGet() {
     this.ctx.body = "hi";
-    console.log(this.ctx.dubbo.TestNodeService);
+    console.log(this.dubbo.TestNodeService);
+  }
+  async dubboReply() {
+    // const res = await this.app.dubbo.OtServiceApi.reply({
+    //   docId: '1',
+    //   userId: 'uid-1',
+    //   data: '{a: "消息a"}',
+    // });
+
+    // const res = await this.app.dubbo.OtServiceApi.getOps({
+    //   docId: '1',
+    //   from: 0,
+    //   to: 100,
+    // });
+
+    // const res = await this.app.dubbo.OtServiceApi.getLatestSnapshot('1');
+    const res = await this.app.dubbo.OtServiceApi.saveDoc({
+      docId: '1',
+      op: '{"a":"hs","id":null}',
+      snapshot: '[{"type":"paragraph","children":[{"text":""}]}]',
+
+    });
+
+    console.log('OtServiceApi.saveDoc>>', res);
+
+
+    this.ctx.body = res;
+
   }
 }
 

@@ -25,8 +25,9 @@ module.exports = appInfo => {
 
   config.rpc = {
     // 配置服务发现
+    // 192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181
     registry: {
-      address: '192.168.20.157:2181/zp_dubbo/bosshi', // configure your real zk address
+      address: '192.168.20.69:2181/zp_dubbo/bosshi', // configure your real zk address
       protocol: 'dubbo',
     },
     // 接口的命名空间，所有的暴露的接口默认都在该命名空间下

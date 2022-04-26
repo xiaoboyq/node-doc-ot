@@ -12,7 +12,7 @@ class OTServer extends Service {
   // 注册客户端连接
   async listen({ userId, collection, docId }) {
     this.logger.info('[listen] pid = ', process.pid, ' userId, docId = ', userId, docId);
-    // listen stream
+
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
     const prevStream = this.app.wsMap[collection + docId][userId];
     if (!prevStream) {
@@ -22,7 +22,6 @@ class OTServer extends Service {
       this.logger.info('[listen] 挂载实例 pid = ', process.pid, ' userId, docId = ', userId, docId);
       this.app.backend.listen(mockStream);
     }
-    // await this.initDoc({ collection, docId });
   }
   // 销毁客户端连接
   async leave({ userId, collection, docId }) {
@@ -56,7 +55,9 @@ class OTServer extends Service {
       }
     } catch (error) {
       this.logger.error('[initDoc] 初始化doc失败 pid = ', process.pid, ' docId = ', docId, error);
+      return false;
     }
+    return true;
   }
 }
 
