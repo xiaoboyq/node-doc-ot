@@ -1,6 +1,7 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -20,7 +21,10 @@ module.exports = appInfo => {
 
   // add your user config here
   const userConfig = {
-    // myAppName: 'egg',
+    logger: {
+      dir: path.join(appInfo.baseDir, 'logs'),
+    },
+    zkRegistry: '192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181',
   };
 
   config.rpc = {

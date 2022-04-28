@@ -1,23 +1,19 @@
 "use strict";
 
 const Controller = require("egg").Controller;
-
-const SlateOt = require("slate-ot");
-const slateType = SlateOt.slateType;
-slateType.transformPresence = () => {};
 const ShareDB = require("sharedb");
 const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
 const MockSocketStream = require("../../lib/stream/mockSocketStream");
+const SlateOt = require("slate-ot");
+const slateType = SlateOt.slateType;
+slateType.transformPresence = p => p;
 ShareDB.types.register(slateType);
 const INITIAL_VALUE = [
   { type: "paragraph", children: [{ text: "" }] },
 ];
 
-// let backend = null;
-
 console.log("testssssss");
-
 
 class HomeController extends Controller {
   // 处理 op
@@ -62,7 +58,7 @@ class HomeController extends Controller {
     const prevStream = this.app.wsMap[collection + docId][userId];
     if (!prevStream) {
       const ws = new EventEmitter();
-      const mockStream = new MockSocketStream(ws, { userId, docId, collection });
+      const mockStream = new MockSocketStream(ws, this.app.dubbo, { userId, docId, collection });
       this.app.wsMap[collection + docId][userId] = mockStream;
       console.log('挂载实例', process.pid, collection + docId, userId);
       this.app.backend.listen(mockStream);

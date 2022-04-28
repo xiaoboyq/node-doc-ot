@@ -27,6 +27,7 @@ exports.receive = async function(docId, userId, data) {
     }
   } catch (error) {
     this.logger.error('[dubbo] [receive] ', error);
+    // TODO 约定返回格式
     return 'false';
   }
   return 'true';
@@ -49,11 +50,7 @@ exports.create = async function(docId) {
  */
 exports.leave = async function(docId, userId) {
   this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'userId', userId);
-  this.app.wsMap[COLLECTION + docId] = this.app.wsMap[COLLECTION + docId] || {};
-  const stream = this.app.wsMap[COLLECTION + docId][userId];
-  if (stream) {
-    stream.destroy();
-  }
+  await this.service.ot.leave({ userId, collection: COLLECTION, docId });
   return 'true';
 };
 

@@ -17,7 +17,7 @@ class OTServer extends Service {
     const prevStream = this.app.wsMap[collection + docId][userId];
     if (!prevStream) {
       const ws = new EventEmitter();
-      const mockStream = new MockSocketStream(ws, { userId, docId, collection });
+      const mockStream = new MockSocketStream(ws, this.app.dubbo, { userId, docId, collection });
       this.app.wsMap[collection + docId][userId] = mockStream;
       this.logger.info('[listen] 挂载实例 pid = ', process.pid, ' userId, docId = ', userId, docId);
       this.app.backend.listen(mockStream);
@@ -29,8 +29,12 @@ class OTServer extends Service {
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
     const stream = this.app.wsMap[collection + docId][userId];
     if (stream) {
-      this.logger.info('[leave] 销毁订阅流 userId, docId = ', userId, docId);
       stream.destroy();
+      delete this.app.wsMap[collection + docId][userId];
+      if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
+        delete this.app.wsMap[collection + docId];
+      }
+      this.logger.info('[leave] 销毁订阅流 userId, docId = ', userId, docId);
     }
   }
   // 将消息转发给shareDB

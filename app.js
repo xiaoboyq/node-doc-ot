@@ -2,7 +2,7 @@
 
 const sharedb = require("sharedb");
 // const DubboDB = require("./lib/db/DubboDB");
-const Dubbo = require('./lib/dubbo');
+const getDubbo = require('./lib/dubbo');
 // const AgentPubSub = require("./lib/pubsub/agentPubsub");
 
 module.exports = app => {
@@ -14,7 +14,7 @@ module.exports = app => {
   // key: collection + docId
   // value: key: userId  value: stream
   app.wsMap = {};
-  app.dubbo = Dubbo;
+  app.dubbo = getDubbo(app.config.zkRegistry);
   // shareDB 实例
   app.backend = new sharedb({
     presence: true,
