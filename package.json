@@ -7,6 +7,8 @@
     "declarations": true
   },
   "dependencies": {
+    "@boss/slate": "^0.77.2",
+    "@boss/slate-ot": "^0.1.6",
     "axios": "^0.26.1",
     "bluebird": "^3.7.2",
     "egg": "^2.15.1",
@@ -17,7 +19,6 @@
     "node-zookeeper-dubbo": "^3.0.15",
     "node-zookeeper-dubbo-plus": "^3.0.16",
     "sharedb": "^2.2.5",
-    "slate-ot": "0.0.4",
     "sofa-node": "^1.0.1",
     "sofa-rpc-node": "^2.2.2"
   },

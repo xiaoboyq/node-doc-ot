@@ -5,7 +5,7 @@ const ShareDB = require("sharedb");
 const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
 const MockSocketStream = require("../../lib/stream/mockSocketStream");
-const SlateOt = require("slate-ot");
+const SlateOt = require("@boss/slate-ot");
 const slateType = SlateOt.slateType;
 slateType.transformPresence = p => p;
 ShareDB.types.register(slateType);
