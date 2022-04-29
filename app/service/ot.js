@@ -5,8 +5,24 @@ const Service = require('egg').Service;
 const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
 const INITIAL_VALUE = [
-  { type: "paragraph", children: [{ text: "" }] },
+  {
+    type: "title",
+    children: [
+      {
+        text: "",
+      },
+    ],
+  },
+  {
+    type: "paragraph",
+    children: [
+      {
+        text: "",
+      },
+    ],
+  },
 ];
+
 // TODO presenceId
 class OTServer extends Service {
   // 注册客户端连接
