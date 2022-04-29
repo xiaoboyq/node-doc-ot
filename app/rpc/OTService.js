@@ -8,23 +8,20 @@ const COLLECTION = 'zhishu';
 /**
  * 接收客户端消息
  * @param  { string } docId 文档ID
- * @param  { string } userId 用户ID
+ * @param  { string } presenceId 用户在场ID
  * @param { string } data 消息主体
  * @return {string} bool
  */
-exports.receive = async function(docId, userId, data) {
+exports.receive = async function(docId, presenceId, data) {
   try {
-    this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, userId, data);
+    this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, presenceId, data);
     const message = JSON.parse(data || {});
     const messageAction = message.a;
     if (messageAction === 'hs') {
       // 握手阶段 进行 客户端连接注册
-      await this.service.ot.listen({ userId, collection: COLLECTION, docId });
+      await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
     }
-    const combineId = COLLECTION + docId;
-    if (combineId in this.app.wsMap && this.app.wsMap[combineId][userId]) {
-      this.app.wsMap[combineId][userId].ws.emit("message", message);
-    }
+    await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
   } catch (error) {
     this.logger.error('[dubbo] [receive] ', error);
     // TODO 约定返回格式
@@ -45,12 +42,12 @@ exports.create = async function(docId) {
 /**
  * 客户端断连，销毁订阅流
  * @param { string } docId  文档ID
- * @param { string } userId  用户ID
+ * @param { string } presenceId  用户在场ID
  * @return {string} bool
  */
-exports.leave = async function(docId, userId) {
-  this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'userId', userId);
-  await this.service.ot.leave({ userId, collection: COLLECTION, docId });
+exports.leave = async function(docId, presenceId) {
+  this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'presenceId', presenceId);
+  await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
   return 'true';
 };
 

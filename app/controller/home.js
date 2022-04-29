@@ -20,17 +20,13 @@ class HomeController extends Controller {
   async index() {
 
     const op = this.ctx.request.body.data;
-    const { userId, collection, docId } = this.ctx.request.body;
-    const combineId = collection + docId;
+    const { presenceId, collection, docId } = this.ctx.request.body;
+    // const combineId = collection + docId;
     if (op.a === 'hs') {
-      await this.service.ot.listen({ userId, collection, docId });
+      await this.service.ot.listen({ presenceId, collection, docId });
       await this.service.ot.initDoc({ collection, docId });
     }
-    if (combineId in this.app.wsMap && this.app.wsMap[combineId][userId]) {
-      this.app.wsMap[collection + docId][userId].ws.emit("message", op);
-    }
-
-
+    await this.service.ot.emitMessage({ data: op, presenceId, collection, docId });
     this.ctx.body = {
       data: {},
       code: 0,
@@ -38,9 +34,9 @@ class HomeController extends Controller {
   }
 
   async leave() {
-    const { userId, collection, docId } = this.ctx.request.body;
+    const { presenceId, collection, docId } = this.ctx.request.body;
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    const stream = this.app.wsMap[collection + docId][userId];
+    const stream = this.app.wsMap[collection + docId][presenceId];
     if (stream) {
       stream.destroy();
     }
@@ -52,15 +48,15 @@ class HomeController extends Controller {
 
   // listen
   async listen() {
-    const { userId, collection, docId } = this.ctx.request.body;
+    const { presenceId, collection, docId } = this.ctx.request.body;
     // listen stream
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    const prevStream = this.app.wsMap[collection + docId][userId];
+    const prevStream = this.app.wsMap[collection + docId][presenceId];
     if (!prevStream) {
       const ws = new EventEmitter();
-      const mockStream = new MockSocketStream(ws, this.app.dubbo, { userId, docId, collection });
-      this.app.wsMap[collection + docId][userId] = mockStream;
-      console.log('挂载实例', process.pid, collection + docId, userId);
+      const mockStream = new MockSocketStream(ws, this.app.dubbo, { presenceId, docId, collection });
+      this.app.wsMap[collection + docId][presenceId] = mockStream;
+      console.log('挂载实例', process.pid, collection + docId, presenceId);
       this.app.backend.listen(mockStream);
     }
 
