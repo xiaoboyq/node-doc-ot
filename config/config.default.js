@@ -31,12 +31,12 @@ module.exports = appInfo => {
     // 配置服务发现
     // 192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181
     registry: {
-      address: '192.168.20.69:2181/zp_dubbo/bosshi', // configure your real zk address
+      address: '192.168.20.69:2181/dubbo/zhishu_ot', // configure your real zk address
       protocol: 'dubbo',
     },
     // 接口的命名空间，所有的暴露的接口默认都在该命名空间下
     server: {
-      namespace: 'com.zhipin.zhishu.nodeapi',
+      namespace: 'com.zhipin.zhishu.dubbo.nodeapi',
     },
     client: {
       responseTimeout: 3000,

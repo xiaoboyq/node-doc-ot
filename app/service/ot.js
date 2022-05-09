@@ -4,9 +4,12 @@ const MockSocketStream = require('../../lib/stream/mockSocketStream');
 const Service = require('egg').Service;
 const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
+const uuidV4 = require('uuid').v4;
+// import { v4 as uuidV4 } from 'uuid';
 const INITIAL_VALUE = [
   {
     type: "title",
+    id: uuidV4(),
     children: [
       {
         text: "",
@@ -15,6 +18,7 @@ const INITIAL_VALUE = [
   },
   {
     type: "paragraph",
+    id: uuidV4(),
     children: [
       {
         text: "",

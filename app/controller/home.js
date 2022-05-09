@@ -20,7 +20,8 @@ class HomeController extends Controller {
   async index() {
 
     const op = this.ctx.request.body.data;
-    const { presenceId, collection, docId } = this.ctx.request.body;
+    let { presenceId, collection, docId } = this.ctx.request.body;
+    collection = collection || 'zhishu';
     // const combineId = collection + docId;
     if (op.a === 'hs') {
       await this.service.ot.listen({ presenceId, collection, docId });

@@ -51,7 +51,7 @@ exports.leave = async function(docId, presenceId) {
   return 'true';
 };
 
-exports.interfaceName = 'com.zhipin.bosshi.nodeapi.OTService';
+exports.interfaceName = 'com.zhipin.zhishu.dubbo.noteapi.OTService';
 exports.version = '1.0.0';
 exports.group = 'ws';
 exports.generic = true;
