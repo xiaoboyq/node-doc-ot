@@ -1,8 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
-const path = require('path');
-
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
@@ -18,12 +16,16 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [];
+  config.logger = {
+    dir: '/data/logs/zhipin-zhishu-node-ot', // path.join(appInfo.baseDir, 'logs'),
+    appLogName: 'boss_info.log',
+    coreLogName: 'egg-web.log',
+    agentLogName: 'egg-agent.log',
+    errorLogName: 'boss_error.log',
+  };
 
   // add your user config here
   const userConfig = {
-    logger: {
-      dir: path.join(appInfo.baseDir, 'logs'),
-    },
     zkRegistry: '192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181',
   };
 

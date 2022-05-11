@@ -13,9 +13,17 @@ const INITIAL_VALUE = [
   { type: "paragraph", children: [{ text: "" }] },
 ];
 
-console.log("testssssss");
+const packageJson = require('../../package.json');
 
 class HomeController extends Controller {
+  async health() {
+
+    this.ctx.body = {
+      message: '服务可用',
+      data: packageJson.version,
+      code: 0,
+    };
+  }
   // 处理 op
   async index() {
 

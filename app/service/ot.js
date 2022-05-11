@@ -74,13 +74,17 @@ class OTServer extends Service {
     const doc = Promise.promisifyAll(connection.get(collection, docId));
     try {
       await doc.fetchAsync();
-      if (doc.type === null) {
+    } catch (error) {
+      this.app.otError('[service] [initDoc] 查询doc失败 ', error, { docId });
+    }
+    // 进行初始化
+    try {
+      if (doc && doc.type === null) {
         await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
       }
     } catch (error) {
-      // this.logger.error('[initDoc] 初始化doc失败 pid = ', process.pid, ' docId = ', docId, error);
       this.app.otError('[service] [initDoc] 初始化doc失败 ', error, { docId });
-      return false;
+      return undefined;
     }
     this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId });
     return JSON.stringify(INITIAL_VALUE);

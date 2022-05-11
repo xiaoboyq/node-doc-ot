@@ -1,7 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
-const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -16,14 +15,9 @@ module.exports = appInfo => {
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1649470071280_8264';
 
-  // add your middleware config here
-  config.middleware = [];
 
   // add your user config here
   const userConfig = {
-    logger: {
-      dir: path.join(appInfo.baseDir, 'logs'),
-    },
     zkRegistry: '192.168.20.35:2181,192.168.20.230:2181,192.168.20.157:2181',
   };
 

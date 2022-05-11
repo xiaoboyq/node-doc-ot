@@ -46,18 +46,18 @@ exports.receive = async function(docId, presenceId, data) {
 exports.create = async function(docId) {
   this.app.otLog('[dubbo] [create] 初始化文档 ', { docId });
   // this.logger.info('[dubbo] [create] 初始化文档 pid = ', process.pid, docId);
-  const success = await this.service.ot.initDoc({ collection: COLLECTION, docId });
-  if (!success) {
+  const docContent = await this.service.ot.initDoc({ collection: COLLECTION, docId });
+  if (!docContent) {
     return {
       code: 2,
       msg: '初始化文档失败',
-      data: true,
+      data: '初始化文档失败',
     };
   }
   return {
     code: 0,
     msg: '操作成功',
-    data: success,
+    data: docContent,
   };
 };
 

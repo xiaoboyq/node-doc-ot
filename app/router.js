@@ -8,5 +8,6 @@ module.exports = app => {
   router.post('/', controller.home.index);
   router.post('/leave', controller.home.leave);
   // router.post('/listen', controller.home.listen);
-  router.get('/', controller.home.dubboReply);
+  router.get('/health', controller.home.health);
+  router.get('/', controller.home.health);
 };
