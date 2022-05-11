@@ -14,7 +14,8 @@ const COLLECTION = 'zhishu';
  */
 exports.receive = async function(docId, presenceId, data) {
   try {
-    this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, presenceId, data);
+    this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
+    // this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, presenceId, data);
     const message = JSON.parse(data || {});
     const messageAction = message.a;
     if (messageAction === 'hs') {
@@ -23,20 +24,41 @@ exports.receive = async function(docId, presenceId, data) {
     }
     await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
   } catch (error) {
-    this.logger.error('[dubbo] [receive] ', error);
-    // TODO 约定返回格式
-    return 'false';
+    // this.logger.error('[dubbo] [receive] 处理客户端消息失败 ', error);
+    console.log('error', error);
+    // this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', error, { docId, presenceId });
+    return {
+      code: 1,
+      msg: '处理客户端消息失败',
+      data: false,
+    };
   }
-  return 'true';
+  return {
+    code: 0,
+    msg: '操作成功',
+    data: true,
+  };
 };
 /**
  * 创建文件
  * @param {string} docId 文档ID
  */
 exports.create = async function(docId) {
-  this.logger.info('[dubbo] [create] 初始化文档 pid = ', process.pid, docId);
+  this.app.otLog('[dubbo] [create] 初始化文档 ', { docId });
+  // this.logger.info('[dubbo] [create] 初始化文档 pid = ', process.pid, docId);
   const success = await this.service.ot.initDoc({ collection: COLLECTION, docId });
-  return success ? 'true' : 'false';
+  if (!success) {
+    return {
+      code: 2,
+      msg: '初始化文档失败',
+      data: true,
+    };
+  }
+  return {
+    code: 0,
+    msg: '操作成功',
+    data: success,
+  };
 };
 
 /**
@@ -46,12 +68,18 @@ exports.create = async function(docId) {
  * @return {string} bool
  */
 exports.leave = async function(docId, presenceId) {
-  this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'presenceId', presenceId);
+  // this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'presenceId', presenceId);
+  this.app.otLog('[dubbo] [leave] 用户断连 ', { docId, presenceId });
   await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
-  return 'true';
+  return {
+    code: 0,
+    msg: '操作成功',
+    data: true,
+  };
 };
 
 exports.interfaceName = 'com.zhipin.zhishu.dubbo.noteapi.OTService';
 exports.version = '1.0.0';
 exports.group = 'ws';
 exports.generic = true;
+exports.dubboVer = '2.6.1';

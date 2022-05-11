@@ -1,6 +1,7 @@
 "use strict";
 
 const sharedb = require("sharedb");
+const DubboDB = require("./lib/db/dubboDB");
 // const DubboDB = require("./lib/db/DubboDB");
 const getDubbo = require('./lib/dubbo');
 // const AgentPubSub = require("./lib/pubsub/agentPubsub");
@@ -19,7 +20,7 @@ module.exports = app => {
   app.backend = new sharedb({
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
-    // db: new DubboDB(app),
+    db: new DubboDB(app),
     // pubsub: new AgentPubSub(app),
   });
 };
