@@ -30,8 +30,8 @@ module.exports = appInfo => {
       file: appInfo.name + '.log',
       formatter: meta => {
         // console.log('meta>>>>', meta);
-        const { traceId, zpBenchId, date, level, message, errorMsg } = meta;
-        let prefix = `${date} ${traceId}#${zpBenchId} ${level} `;
+        const { traceId, zpBenchId, time, level, message, errorMsg } = meta;
+        let prefix = `${time} ${traceId}#${zpBenchId} ${level} `;
         if (errorMsg) {
           prefix += `${errorMsg} `;
         }

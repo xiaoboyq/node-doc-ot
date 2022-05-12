@@ -10,10 +10,11 @@ module.exports = {
     // this.logger.info(loggerInfo);
     const meta = {
       pid: process.pid,
-      date: `${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      time: `${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}`,
       traceId: docId,
       zpBenchId: presenceId || docId,
     };
+    // console.log('meta>>>>', meta);
     return this.getLogger('otLog').log('INFO', data ? [ msg, JSON.stringify(data) ] : [ msg ], meta);
   },
   otError(msg, { docId, presenceId } = {}, error) {
@@ -23,7 +24,7 @@ module.exports = {
     // this.logger.error(loggerInfo);
     const meta = {
       pid: process.pid,
-      date: `${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      time: `${moment().format('YYYY-MM-DD HH:mm:ss.SSS')}`,
       traceId: docId,
       zpBenchId: presenceId || docId,
       errorMsg: msg,
