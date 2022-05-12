@@ -19,10 +19,26 @@ module.exports = appInfo => {
 
   config.logger = {
     dir: `/data/logs/${appInfo.name}`, // path.join(appInfo.baseDir, 'logs'),
-    appLogName: 'boss_info.log',
-    coreLogName: 'egg-web.log',
+    appLogName: `app-web.log`,
+    coreLogName: 'core-web.log',
     agentLogName: 'egg-agent.log',
     errorLogName: 'boss_error.log',
+  };
+
+  config.customLogger = {
+    otLog: {
+      file: appInfo.name + '.log',
+      formatter: meta => {
+        // console.log('meta>>>>', meta);
+        const { traceId, zpBenchId, date, level, message, errorMsg } = meta;
+        let prefix = `${date} ${traceId}#${zpBenchId} ${level} `;
+        if (errorMsg) {
+          prefix += `${errorMsg} `;
+        }
+        prefix += `${message} `;
+        return prefix;
+      },
+    },
   };
 
 

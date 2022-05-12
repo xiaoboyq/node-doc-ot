@@ -15,6 +15,7 @@ const COLLECTION = 'zhishu';
 exports.receive = async function(docId, presenceId, data) {
   try {
     this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
+    // this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, data);
     // this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, presenceId, data);
     const message = JSON.parse(data || {});
     const messageAction = message.a;
@@ -24,9 +25,7 @@ exports.receive = async function(docId, presenceId, data) {
     }
     await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
   } catch (error) {
-    // this.logger.error('[dubbo] [receive] 处理客户端消息失败 ', error);
-    console.log('error', error);
-    // this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', error, { docId, presenceId });
+    this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, error);
     return {
       code: 1,
       msg: '处理客户端消息失败',
@@ -45,7 +44,6 @@ exports.receive = async function(docId, presenceId, data) {
  */
 exports.create = async function(docId) {
   this.app.otLog('[dubbo] [create] 初始化文档 ', { docId });
-  // this.logger.info('[dubbo] [create] 初始化文档 pid = ', process.pid, docId);
   const docContent = await this.service.ot.initDoc({ collection: COLLECTION, docId });
   if (!docContent) {
     return {
@@ -68,7 +66,6 @@ exports.create = async function(docId) {
  * @return {string} bool
  */
 exports.leave = async function(docId, presenceId) {
-  // this.logger.info('[dubbo] [leave] 接收参数 pid = ', process.pid, ' docId = ', docId, 'presenceId', presenceId);
   this.app.otLog('[dubbo] [leave] 用户断连 ', { docId, presenceId });
   await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
   return {

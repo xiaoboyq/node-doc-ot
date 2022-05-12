@@ -62,7 +62,7 @@ class OTServer extends Service {
       this.app.wsMap[collection + docId][presenceId].ws.emit("message", op);
     } else {
       this.app.otError('[service] [emitMessage] 本机未订阅该客户端 ', { docId, presenceId });
-      this.app.otError('[service] [emitMessage] 忽略该条消息 ', op, { docId, presenceId });
+      this.app.otError('[service] [emitMessage] 忽略该条消息 ', { docId, presenceId }, op);
     }
   }
   // 初始化文档内容
@@ -72,7 +72,7 @@ class OTServer extends Service {
     try {
       await doc.fetchAsync();
     } catch (error) {
-      this.app.otError('[service] [initDoc] 查询doc失败 ', error, { docId });
+      this.app.otError('[service] [initDoc] 查询doc失败 ', { docId }, error);
     }
     // 进行初始化
     try {
@@ -80,10 +80,10 @@ class OTServer extends Service {
         await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
       }
     } catch (error) {
-      this.app.otError('[service] [initDoc] 初始化doc失败 ', error, { docId });
+      this.app.otError('[service] [initDoc] 初始化doc失败 ', { docId }, error);
       return undefined;
     }
-    this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId });
+    this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: INITIAL_VALUE });
     return JSON.stringify(INITIAL_VALUE);
   }
 }

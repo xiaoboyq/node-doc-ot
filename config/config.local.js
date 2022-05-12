@@ -14,10 +14,6 @@ module.exports = appInfo => {
 
   config.logger = {
     dir: path.join(appInfo.baseDir, 'logs'),
-    appLogName: 'boss_info.log',
-    coreLogName: 'egg-web.log',
-    agentLogName: 'egg-agent.log',
-    errorLogName: 'boss_error.log',
   };
 
 

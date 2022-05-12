@@ -22,6 +22,8 @@ class HomeController extends Controller {
   async index() {
     const op = this.ctx.request.body.data;
     let { presenceId, collection, docId } = this.ctx.request.body;
+    // this.app.otLog('[controller] [receive] 接收客户端消息', { docId, presenceId }, op);
+    // this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, new Error(JSON.stringify(op)));
     collection = collection || 'zhishu';
     // const combineId = collection + docId;
     if (op.a === 'hs') {
