@@ -31,6 +31,3 @@ $ npm stop
 
 
 [egg]: https://eggjs.org
-
-// jar 包生成
-rm -rf build-jar && mkdir build-jar && javac -d build-jar /Users/ljy/node/node-ot/src/main/java/com/zhipin/bosshi/nodeapi/* && jar cvf build-jar/TestNodeService.jar build-jar src/*

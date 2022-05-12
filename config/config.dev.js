@@ -2,24 +2,14 @@
 
 'use strict';
 
-/**
- * @param {Egg.EggAppInfo} appInfo app info
- */
-module.exports = appInfo => {
+module.exports = () => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
   const config = exports = {};
 
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1649470071280_8264';
-
-
-  // add your user config here
-  const userConfig = {
-    zkRegistry: '192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181',
-  };
+  config.zkRegistry = '192.168.20.69:2181,192.168.20.74:2181,192.168.20.70:2181';
 
   config.rpc = {
     // 配置服务发现
@@ -39,6 +29,5 @@ module.exports = appInfo => {
 
   return {
     ...config,
-    ...userConfig,
   };
 };

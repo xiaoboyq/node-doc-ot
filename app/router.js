@@ -5,8 +5,11 @@
  */
 module.exports = app => {
   const { router, controller } = app;
-  router.post('/', controller.home.index);
-  router.post('/leave', controller.home.leave);
+
+  if (app.config.env === 'local') {
+    router.post('/', controller.home.index);
+    router.post('/leave', controller.home.leave);
+  }
   // router.post('/listen', controller.home.listen);
   router.get('/health', controller.home.health);
   router.get('/', controller.home.health);

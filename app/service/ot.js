@@ -37,14 +37,12 @@ class OTServer extends Service {
       const ws = new EventEmitter();
       const mockStream = new MockSocketStream(ws, this.app.dubbo, { presenceId, docId, collection });
       this.app.wsMap[collection + docId][presenceId] = mockStream;
-      // this.logger.info('[listen] 挂载实例 pid = ', process.pid, ' presenceId, docId = ', presenceId, docId);
       this.app.otLog('[service] [listen] 挂载实例  ', { docId, presenceId });
       this.app.backend.listen(mockStream);
     }
   }
   // 销毁客户端连接
   async leave({ presenceId, collection, docId }) {
-    // this.logger.info('[leave] presenceId, docId = ', presenceId, docId);
     this.app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
     const stream = this.app.wsMap[collection + docId][presenceId];
@@ -54,7 +52,6 @@ class OTServer extends Service {
       if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
         delete this.app.wsMap[collection + docId];
       }
-      // this.logger.info('[leave] 销毁订阅流 presenceId, docId = ', presenceId, docId);
       this.app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
     }
   }
