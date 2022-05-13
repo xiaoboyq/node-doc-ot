@@ -15,8 +15,6 @@ const COLLECTION = 'zhishu';
 exports.receive = async function(docId, presenceId, data) {
   try {
     this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
-    // this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, data);
-    // this.logger.info('[dubbo] [receive] 接收参数 pid = ', process.pid, docId, presenceId, data);
     const message = JSON.parse(data || {});
     const messageAction = message.a;
     if (messageAction === 'hs') {

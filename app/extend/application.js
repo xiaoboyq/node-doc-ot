@@ -1,6 +1,14 @@
 'use strict';
 const moment = require('moment');
 module.exports = {
+  // get coreLogger() {
+  //   console.log("重写 coreLogger 》〉》〉》");
+  //   return this.getLogger('coreLogger');
+  // },
+  // get logger() {
+  //   console.log("重写 logger 》〉》〉》");
+  //   return this.getLogger('logger');
+  // },
   otLog(msg, { docId, presenceId } = {}, data) {
     // let loggerInfo = `${msg} `;
     // loggerInfo += `pid = ${process.pid} `;
