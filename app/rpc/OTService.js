@@ -18,8 +18,11 @@ exports.receive = async function(docId, presenceId, data) {
     const message = JSON.parse(data || {});
     const messageAction = message.a;
     if (messageAction === 'hs') {
-      // 握手阶段 进行 客户端连接注册
-      await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+      const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
+      if (!subscribed) {
+        // 握手阶段 进行 客户端连接注册
+        await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+      }
     }
     await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
   } catch (error) {
