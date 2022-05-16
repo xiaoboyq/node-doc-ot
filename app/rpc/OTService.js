@@ -82,7 +82,9 @@ exports.leave = async function(docId, presenceId) {
 };
 
 // dubbo 健康检测
-exports.ping = async function() {
+// 注意：参数 docId 不能少
+// eslint-disable-next-line no-unused-vars
+exports.ping = async function(docId) {
   return {
     code: 0,
     msg: '',
