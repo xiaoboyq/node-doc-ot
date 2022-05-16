@@ -65,11 +65,28 @@ exports.create = async function(docId) {
  */
 exports.leave = async function(docId, presenceId) {
   this.app.otLog('[dubbo] [leave] 用户断连 ', { docId, presenceId });
-  await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
+  try {
+    await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
+    return {
+      code: 0,
+      msg: '操作成功',
+      data: true,
+    };
+  } catch (error) {
+    return {
+      code: 3,
+      msg: '离场失败',
+      data: false,
+    };
+  }
+};
+
+// dubbo 健康检测
+exports.ping = async function() {
   return {
     code: 0,
-    msg: '操作成功',
-    data: true,
+    msg: '',
+    data: null,
   };
 };
 

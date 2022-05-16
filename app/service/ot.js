@@ -35,7 +35,7 @@ class OTServer extends Service {
     const prevStream = this.app.wsMap[collection + docId][presenceId];
     if (!prevStream) {
       const ws = new EventEmitter();
-      const mockStream = new MockSocketStream(ws, this.app.dubbo, { presenceId, docId, collection });
+      const mockStream = new MockSocketStream(ws, { dubbo: this.app.dubbo, logger: this.app.otLog }, { presenceId, docId, collection });
       this.app.wsMap[collection + docId][presenceId] = mockStream;
       this.app.otLog('[service] [listen] 挂载实例  ', { docId, presenceId });
       this.app.backend.listen(mockStream);
