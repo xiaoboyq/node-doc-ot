@@ -1,7 +1,7 @@
 "use strict";
 
 const Controller = require("egg").Controller;
-const ShareDB = require("sharedb");
+const ShareDB = require("@boss/sharedb");
 const SlateOt = require("@boss/slate-ot");
 const slateType = SlateOt.slateType;
 slateType.transformPresence = p => p;

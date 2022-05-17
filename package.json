@@ -7,6 +7,7 @@
     "declarations": true
   },
   "dependencies": {
+    "@boss/sharedb": "3.0.3",
     "@boss/slate": "^0.77.2",
     "@boss/slate-ot": "^0.1.6",
     "axios": "^0.26.1",
@@ -19,7 +20,6 @@
     "moment": "^2.29.3",
     "node-zookeeper-dubbo": "^3.0.15",
     "node-zookeeper-dubbo-plus": "^3.0.16",
-    "sharedb": "^2.2.5",
     "sofa-node": "^1.0.1",
     "sofa-rpc-node": "^2.2.2"
   },

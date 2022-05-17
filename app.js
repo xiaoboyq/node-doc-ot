@@ -1,6 +1,6 @@
 "use strict";
 
-const sharedb = require("sharedb");
+const sharedb = require("@boss/sharedb");
 const DubboDB = require("./lib/db/dubboDB");
 const getDubbo = require('./lib/dubbo');
 
