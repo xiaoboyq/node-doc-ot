@@ -7,15 +7,15 @@ const Promise = require('bluebird');
 const uuidV4 = require('uuid').v4;
 // import { v4 as uuidV4 } from 'uuid';
 const INITIAL_VALUE = [
-  {
-    type: "title",
-    id: uuidV4(),
-    children: [
-      {
-        text: "",
-      },
-    ],
-  },
+  // {
+  //   type: "title",
+  //   id: uuidV4(),
+  //   children: [
+  //     {
+  //       text: "",
+  //     },
+  //   ],
+  // },
   {
     type: "paragraph",
     id: uuidV4(),
