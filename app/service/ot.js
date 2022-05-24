@@ -86,6 +86,7 @@ class OTServer extends Service {
     // 进行初始化
     try {
       if (doc && doc.type === null) {
+        this.app.otLog('[service] [initDoc] 开始初始化doc ', { docId });
         await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
       }
       this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: INITIAL_VALUE });
