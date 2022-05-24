@@ -21,14 +21,21 @@ exports.receive = async function(docId, presenceId, data) {
       const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
       if (!subscribed) {
         // 握手阶段 进行 客户端连接注册
-        await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+        const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+        if (!success) {
+          return {
+            code: 2001,
+            msg: '客户端订阅失败',
+            data: false,
+          };
+        }
       }
     }
     await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
   } catch (error) {
     this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, error);
     return {
-      code: 1,
+      code: 2002,
       msg: '处理客户端消息失败',
       data: false,
     };
@@ -48,7 +55,7 @@ exports.create = async function(docId) {
   const docContent = await this.service.ot.initDoc({ collection: COLLECTION, docId });
   if (!docContent) {
     return {
-      code: 2,
+      code: 2003,
       msg: '初始化文档失败',
       data: '初始化文档失败',
     };
@@ -77,7 +84,7 @@ exports.leave = async function(docId, presenceId) {
     };
   } catch (error) {
     return {
-      code: 3,
+      code: 2004,
       msg: '离场失败',
       data: false,
     };

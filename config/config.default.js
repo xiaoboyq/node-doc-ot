@@ -60,6 +60,24 @@ module.exports = appInfo => {
     },
   };
 
+  // LRU 配置
+  config.lru = {
+    clients: {
+      snapshot: {
+        max: 100,
+        maxAge: 1000 * 60 * 10, // 10 min cache
+      },
+      ops: {
+        max: 1000,
+        maxAge: 1000 * 60 * 60, // 60 min cache
+      },
+    },
+    // load into app, default is open
+    app: true,
+    // load into agent, default is close
+    agent: false,
+  };
+
   return {
     ...config,
   };

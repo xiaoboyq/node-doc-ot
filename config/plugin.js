@@ -15,3 +15,8 @@ exports.dubboRpc = {
 exports.security = {
   enable: false,
 };
+
+exports.lru = {
+  enable: true,
+  package: 'egg-lru',
+};

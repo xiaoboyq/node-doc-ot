@@ -4,21 +4,12 @@ const MockSocketStream = require('../../lib/stream/mockSocketStream');
 const Service = require('egg').Service;
 const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
-const uuidV4 = require('uuid').v4;
-// import { v4 as uuidV4 } from 'uuid';
+const shortUuid = require('short-uuid');
+
 const INITIAL_VALUE = [
-  // {
-  //   type: "title",
-  //   id: uuidV4(),
-  //   children: [
-  //     {
-  //       text: "",
-  //     },
-  //   ],
-  // },
   {
     type: "paragraph",
-    id: uuidV4(),
+    id: shortUuid(),
     children: [
       {
         text: "",
@@ -31,6 +22,12 @@ class OTServer extends Service {
   // 注册客户端连接
   async listen({ presenceId, collection, docId }) {
     this.app.otLog('[service] [listen] 注册客户端连接 ', { docId, presenceId });
+    // 检查是否需要在此进行文档初始化
+    const initSuccess = await this.checkInItDoc({ collection, docId });
+    if (!initSuccess) {
+      this.app.otError('[service] [listen] 初始化文档失败 ', { docId, presenceId });
+      return false;
+    }
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
     const prevStream = this.app.wsMap[collection + docId][presenceId];
     if (!prevStream) {
@@ -40,6 +37,14 @@ class OTServer extends Service {
       this.app.otLog('[service] [listen] 挂载实例  ', { docId, presenceId });
       this.app.backend.listen(mockStream);
     }
+    return true;
+  }
+  async checkInItDoc({ collection, docId }) {
+    if (!this.app.wsMap[collection + docId]) {
+      const success = await this.initDoc({ collection, docId });
+      return !!success;
+    }
+    return true;
   }
   hasSubscribed({ presenceId, collection, docId }) {
     const combineId = collection + docId;
@@ -83,12 +88,12 @@ class OTServer extends Service {
       if (doc && doc.type === null) {
         await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
       }
+      this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: INITIAL_VALUE });
+      return JSON.stringify(INITIAL_VALUE);
     } catch (error) {
       this.app.otError('[service] [initDoc] 初始化doc失败 ', { docId }, error);
       return undefined;
     }
-    this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: INITIAL_VALUE });
-    return JSON.stringify(INITIAL_VALUE);
   }
 }
 
