@@ -59,6 +59,10 @@ class OTServer extends Service {
       stream.destroy();
       delete this.app.wsMap[collection + docId][presenceId];
       if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
+        // 当当前 docID 没有客户端时，清空 op、snapshot缓存
+        this.app.lru.get('snapshot').delete(docId);
+        this.app.lru.get('ops').delete(docId);
+        this.app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete this.app.wsMap[collection + docId];
       }
       this.app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
@@ -70,7 +74,7 @@ class OTServer extends Service {
     if (combineId in this.app.wsMap && this.app.wsMap[combineId][presenceId]) {
       this.app.wsMap[collection + docId][presenceId].ws.emit("message", op);
     } else {
-      this.app.otError('[service] [emitMessage] 本机未订阅该客户端 ', { docId, presenceId });
+      this.app.otError('[service] [emitMessage] 本机未订阅该客户端 ', { docId, presenceId }, { docId, presenceId });
       this.app.otError('[service] [emitMessage] 忽略该条消息 ', { docId, presenceId }, op);
     }
   }

@@ -1,13 +1,13 @@
 {
   "name": "zhipin-zhishu-node-ot",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "",
   "private": true,
   "egg": {
     "declarations": true
   },
   "dependencies": {
-    "@boss/sharedb": "3.0.6-beta",
+    "@boss/sharedb": "^3.0.10-beta",
     "@boss/slate": "^0.77.2",
     "@boss/slate-ot": "^0.1.6",
     "axios": "^0.26.1",

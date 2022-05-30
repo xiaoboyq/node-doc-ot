@@ -16,7 +16,7 @@ module.exports = {
       traceId: docId,
       zpBenchId: rid || presenceId,
     };
-    data = typeof data !== 'string' ? JSON.stringify(data) : data;
+    data = typeof data !== 'string' ? JSON.stringify(data || '') : data;
     return this.getLogger('otLog').log('INFO', data ? [ msg, data ] : [ msg ], meta);
   },
   otError(msg, { docId, presenceId, rid } = {}, error) {
@@ -33,7 +33,7 @@ module.exports = {
       errorInfo.push(error.message);
       errorInfo.push(JSON.stringify(error.stack));
     } else {
-      errorInfo.push(typeof error !== 'string' ? JSON.stringify(error) : error);
+      errorInfo.push(typeof error !== 'string' ? JSON.stringify(error || '') : error);
     }
 
     return this.getLogger('otLog').log('ERROR', errorInfo, meta);

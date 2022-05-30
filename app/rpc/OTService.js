@@ -16,33 +16,48 @@ exports.receive = async function(docId, presenceId, data) {
   try {
     this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
     const message = JSON.parse(data || {});
-    const messageAction = message.a;
-    if (messageAction === 'hs') {
-      const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
-      if (!subscribed) {
-        // 握手阶段 进行 客户端连接注册
-        const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
-        if (!success) {
-          return {
-            code: 2001,
-            msg: '客户端订阅失败',
-            data: false,
-          };
-        }
+    // const messageAction = message.a;
+    // if (messageAction === 'hs') {
+    //   const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
+    //   if (!subscribed) {
+    //     // 握手阶段 进行 客户端连接注册
+    //     const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+    //     if (!success) {
+    //       return {
+    //         code: 2001,
+    //         message: '客户端订阅失败',
+    //         data: false,
+    //       };
+    //     }
+    //   }
+    // }
+
+    const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
+    if (!subscribed) {
+      // 进行 客户端连接注册
+      const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+      if (!success) {
+        return {
+          code: 2001,
+          message: '客户端订阅失败',
+          data: false,
+        };
       }
+      this.app.otLog('[dubbo] [receive] 用户订阅成功 ', { docId, presenceId });
     }
     await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
+
   } catch (error) {
     this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, error);
     return {
       code: 2002,
-      msg: '处理客户端消息失败',
+      message: '处理客户端消息失败',
       data: false,
     };
   }
   return {
     code: 0,
-    msg: '操作成功',
+    message: '操作成功',
     data: true,
   };
 };
@@ -56,13 +71,13 @@ exports.create = async function(docId) {
   if (!docContent) {
     return {
       code: 2003,
-      msg: '初始化文档失败',
+      message: '初始化文档失败',
       data: '初始化文档失败',
     };
   }
   return {
     code: 0,
-    msg: '操作成功',
+    message: '操作成功',
     data: docContent,
   };
 };
@@ -79,25 +94,38 @@ exports.leave = async function(docId, presenceId) {
     await this.service.ot.leave({ presenceId, collection: COLLECTION, docId });
     return {
       code: 0,
-      msg: '操作成功',
+      message: '操作成功',
       data: true,
     };
   } catch (error) {
     return {
       code: 2004,
-      msg: '离场失败',
+      message: '离场失败',
       data: false,
     };
   }
 };
 
 // dubbo 健康检测
-// 注意：参数 docId 不能少
-// eslint-disable-next-line no-unused-vars
-exports.ping = async function(docId) {
+exports.ping = async function(docId, presenceId) {
+  const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
+  if (!subscribed) {
+    // 进行 客户端连接注册
+    const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
+    if (!success) {
+      return {
+        code: 2001,
+        message: '客户端订阅失败',
+        data: false,
+      };
+    }
+    this.app.otLog('[dubbo] [ping] 用户订阅成功 ', { docId, presenceId });
+
+  }
+
   return {
     code: 0,
-    msg: '',
+    message: '',
     data: null,
   };
 };

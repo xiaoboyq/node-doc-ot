@@ -63,10 +63,12 @@ module.exports = appInfo => {
   // LRU 配置
   config.lru = {
     clients: {
+      // 缓存快照
       snapshot: {
         max: 100,
         maxAge: 1000 * 60 * 10, // 10 min cache
       },
+      // 缓存历史ops
       ops: {
         max: 1000,
         maxAge: 1000 * 60 * 60, // 60 min cache
