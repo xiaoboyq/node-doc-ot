@@ -6,17 +6,20 @@ const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
 const shortUuid = require('short-uuid');
 
-const INITIAL_VALUE = [
-  {
-    type: "paragraph",
-    id: shortUuid(),
-    children: [
-      {
-        text: "",
-      },
-    ],
-  },
-];
+
+function getInitialValue() {
+  return [
+    {
+      type: "paragraph",
+      id: shortUuid.generate(),
+      children: [
+        {
+          text: "",
+        },
+      ],
+    },
+  ];
+}
 
 class OTServer extends Service {
   // 注册客户端连接
@@ -91,10 +94,12 @@ class OTServer extends Service {
     try {
       if (doc && doc.type === null) {
         this.app.otLog('[service] [initDoc] 开始初始化doc ', { docId });
-        await doc.createAsync({ children: INITIAL_VALUE }, "slate-ot-type");
+        const initialValue = getInitialValue();
+        await doc.createAsync({ children: initialValue }, "slate-ot-type");
+        this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: initialValue });
+        return JSON.stringify(initialValue);
       }
-      this.app.otLog('[service] [initDoc] 初始化doc成功 ', { docId }, { content: INITIAL_VALUE });
-      return JSON.stringify(INITIAL_VALUE);
+      return JSON.stringify(doc.data);
     } catch (error) {
       this.app.otError('[service] [initDoc] 初始化doc失败 ', { docId }, error);
       return undefined;
