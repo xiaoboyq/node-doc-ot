@@ -61,10 +61,11 @@ class OTServer extends Service {
     if (stream) {
       stream.destroy();
       delete this.app.wsMap[collection + docId][presenceId];
+      console.log('[service] [leave] 检查订阅数 ', Object.keys(this.app.wsMap[collection + docId]).length);
       if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
         // 当当前 docID 没有客户端时，清空 op、snapshot缓存
-        this.app.lru.get('snapshot').delete(docId);
-        this.app.lru.get('ops').delete(docId);
+        this.app.lru.get('snapshot').del(docId);
+        this.app.lru.get('ops').del(docId);
         this.app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete this.app.wsMap[collection + docId];
       }

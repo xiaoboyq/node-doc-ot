@@ -13,4 +13,5 @@ module.exports = app => {
   // router.post('/listen', controller.home.listen);
   router.get('/health', controller.home.health);
   router.get('/', controller.home.health);
+  router.get('/delCache', controller.home.delCache);
 };
