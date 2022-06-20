@@ -19,6 +19,6 @@ module.exports = app => {
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
     db: new DubboDB(app),
-    // gzip: true,
+    gzip: true,
   });
 };
