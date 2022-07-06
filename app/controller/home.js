@@ -36,17 +36,39 @@ class HomeController extends Controller {
     };
   }
 
-  async leave() {
-    const { presenceId, collection, docId } = this.ctx.request.body;
-    this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    const stream = this.app.wsMap[collection + docId][presenceId];
-    if (stream) {
-      stream.destroy();
+  async testDubbo() {
+    try {
+      const { docId } = this.ctx.request.queries;
+      const res = await this.app.dubbo.OtServiceApi.getLatestSnapshot(docId || "j4iloMJejPFraUnDZoc4Iw==");
+      this.ctx.body = {
+        data: res,
+        code: 0,
+      };
+    } catch (error) {
+      this.ctx.body = {
+        data: error.message,
+        code: -1,
+      };
     }
-    this.ctx.body = {
-      data: {},
-      code: 0,
-    };
+  }
+
+  async leave() {
+    try {
+      const { presenceId, docId } = this.ctx.request.body;
+      this.app.otLog('[controller] [leave] 手动触发用户断连 ', { docId, presenceId });
+      await this.service.ot.leave({ presenceId, collection: 'zhishu', docId });
+      this.ctx.body = {
+        code: 0,
+        message: '操作成功',
+        data: true,
+      };
+    } catch (error) {
+      this.ctx.body = {
+        code: 2004,
+        message: '离场失败',
+        data: false,
+      };
+    }
   }
 
 }
