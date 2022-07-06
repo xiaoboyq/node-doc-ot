@@ -36,6 +36,22 @@ class HomeController extends Controller {
     };
   }
 
+  async testDubbo() {
+    try {
+      const res = await this.app.dubbo.OtServiceApi.getLatestSnapshot("j4iloMJejPFraUnDZoc4Iw==");
+      this.ctx.body = {
+        data: res,
+        code: 0,
+      };
+    } catch (error) {
+      this.ctx.body = {
+        data: error.message,
+        code: -1,
+      };
+    }
+
+  }
+
   async leave() {
     const { presenceId, collection, docId } = this.ctx.request.body;
     this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
