@@ -16,21 +16,6 @@ exports.receive = async function(docId, presenceId, data) {
   try {
     this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
     const message = JSON.parse(data || {});
-    // const messageAction = message.a;
-    // if (messageAction === 'hs') {
-    //   const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
-    //   if (!subscribed) {
-    //     // 握手阶段 进行 客户端连接注册
-    //     const success = await this.service.ot.listen({ presenceId, collection: COLLECTION, docId });
-    //     if (!success) {
-    //       return {
-    //         code: 2001,
-    //         message: '客户端订阅失败',
-    //         data: false,
-    //       };
-    //     }
-    //   }
-    // }
 
     const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
     if (!subscribed) {
@@ -126,7 +111,19 @@ exports.ping = async function(docId, presenceId) {
   return {
     code: 0,
     message: '',
-    data: null,
+    data: true,
+  };
+};
+
+// revert 历史还原
+exports.revert = async function(docId) {
+  this.app.lru.get('snapshot').del(docId);
+  this.app.lru.get('ops').del(docId);
+  this.app.otLog('[dubbo] [revert] 历史还原 清空缓存 ', { docId });
+  return {
+    code: 0,
+    message: '',
+    data: true,
   };
 };
 
