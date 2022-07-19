@@ -19,7 +19,7 @@ module.exports = app => {
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
     db: new DubboDB(app),
-    gzip: true,
+    // gzip: true,
   });
 
   // sharedb 中间件——注入handle op 逻辑

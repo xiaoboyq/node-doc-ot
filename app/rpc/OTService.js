@@ -117,13 +117,14 @@ exports.ping = async function(docId, presenceId) {
 
 // revert 历史还原
 exports.revert = async function(docId) {
-  this.app.lru.get('snapshot').del(docId);
-  this.app.lru.get('ops').del(docId);
-  this.app.otLog('[dubbo] [revert] 历史还原 清空缓存 ', { docId });
+  const success1 = this.app.lru.get('snapshot').del(docId);
+  const success2 = this.app.lru.get('ops').del(docId);
+  const success = success1 && success2;
+  this.app.otLog(`[dubbo] [revert] 历史还原 清空缓存 ${success ? '成功' : '失败'}`, { docId });
   return {
-    code: 0,
+    code: success ? 0 : 2005,
     message: '',
-    data: true,
+    data: success,
   };
 };
 
