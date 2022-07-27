@@ -7,7 +7,7 @@
     "declarations": true
   },
   "dependencies": {
-    "@boss/sharedb": "3.0.46-beta",
+    "@boss/sharedb": "3.0.52-beta",
     "@boss/slate": "^0.77.2",
     "@boss/slate-ot": "^0.1.6",
     "axios": "^0.26.1",

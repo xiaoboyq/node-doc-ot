@@ -30,7 +30,11 @@ exports.receive = async function(docId, presenceId, data) {
       }
       this.app.otLog('[dubbo] [receive] 用户订阅成功 ', { docId, presenceId });
     }
-    await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
+    // 未订阅状态不处理 op, 否则 op ack 时， op ack 对比的 v 和本地的 v（subsribe同步的） 可能不一致，会触发 fetch 同步
+    if (subscribed || message.a !== 'op') {
+      await this.service.ot.emitMessage({ data: message, presenceId, collection: COLLECTION, docId });
+    }
+
 
   } catch (error) {
     this.app.otError('[dubbo] [receive] 处理客户端消息失败 ', { docId, presenceId }, error);

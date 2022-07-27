@@ -39,6 +39,23 @@ module.exports = app => {
         next();
       }
     });
-
   });
+
+  app.handleUserLeave = ({ docId, presenceId, collection = "zhishu" }) => {
+    app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
+    app.wsMap[collection + docId] = app.wsMap[collection + docId] || {};
+    const stream = app.wsMap[collection + docId][presenceId];
+    if (stream) {
+      stream.destroy();
+      delete app.wsMap[collection + docId][presenceId];
+      if (Object.keys(app.wsMap[collection + docId]).length === 0) {
+        // 当当前 docID 没有客户端时，清空 op、snapshot缓存
+        app.lru.get('snapshot').del(docId);
+        app.lru.get('ops').del(docId);
+        app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
+        delete app.wsMap[collection + docId];
+      }
+      app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
+    }
+  };
 };

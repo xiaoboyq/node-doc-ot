@@ -54,23 +54,24 @@ class OTServer extends Service {
     return this.app.wsMap[combineId] && this.app.wsMap[combineId][presenceId];
   }
   // 销毁客户端连接
-  async leave({ presenceId, collection, docId }) {
-    this.app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
-    this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    const stream = this.app.wsMap[collection + docId][presenceId];
-    if (stream) {
-      stream.destroy();
-      delete this.app.wsMap[collection + docId][presenceId];
-      console.log('[service] [leave] 检查订阅数 ', Object.keys(this.app.wsMap[collection + docId]).length);
-      if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
-        // 当当前 docID 没有客户端时，清空 op、snapshot缓存
-        this.app.lru.get('snapshot').del(docId);
-        this.app.lru.get('ops').del(docId);
-        this.app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
-        delete this.app.wsMap[collection + docId];
-      }
-      this.app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
-    }
+  async leave({ presenceId, collection = 'zhishu', docId }) {
+    // this.app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
+    // this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
+    // const stream = this.app.wsMap[collection + docId][presenceId];
+    // if (stream) {
+    //   stream.destroy();
+    //   delete this.app.wsMap[collection + docId][presenceId];
+    //   console.log('[service] [leave] 检查订阅数 ', Object.keys(this.app.wsMap[collection + docId]).length);
+    //   if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
+    //     // 当当前 docID 没有客户端时，清空 op、snapshot缓存
+    //     this.app.lru.get('snapshot').del(docId);
+    //     this.app.lru.get('ops').del(docId);
+    //     this.app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
+    //     delete this.app.wsMap[collection + docId];
+    //   }
+    //   this.app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
+    // }
+    this.app.handleUserLeave({ presenceId, docId, collection });
   }
   // 将消息转发给shareDB
   async emitMessage({ data: op, presenceId, collection, docId }) {
