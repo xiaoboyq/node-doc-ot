@@ -14,8 +14,9 @@ const COLLECTION = 'zhishu';
  */
 exports.receive = async function(docId, presenceId, data) {
   try {
-    this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, data);
+
     const message = JSON.parse(data || {});
+    this.app.otLog('[dubbo] [receive] 接收客户端消息', { docId, presenceId }, this.helper.omit(message, [ 'op' ]));
 
     const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, collection: COLLECTION });
     if (!subscribed) {

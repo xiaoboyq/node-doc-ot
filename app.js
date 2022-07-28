@@ -55,7 +55,6 @@ module.exports = app => {
         app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete app.wsMap[collection + docId];
       }
-      app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
     }
   };
 };
