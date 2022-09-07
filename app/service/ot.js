@@ -23,70 +23,56 @@ function getInitialValue() {
 
 class OTServer extends Service {
   // 注册客户端连接
-  async listen({ presenceId, collection, docId }) {
+  async listen({ presenceId, docId, ottype }) {
     this.app.otLog('[service] [listen] 注册客户端连接 ', { docId, presenceId });
-    // 检查是否需要在此进行文档初始化
-    const initSuccess = await this.checkInItDoc({ collection, docId });
-    if (!initSuccess) {
-      this.app.otError('[service] [listen] 初始化文档失败 ', { docId, presenceId });
-      return false;
+    // 检查是否需要在此进行文档初始化(仅限轻文档)
+    if (ottype === 'doc') {
+      const initSuccess = await this.checkInItDoc({ ottype, docId });
+      if (!initSuccess) {
+        this.app.otError('[service] [listen] 初始化文档失败 ', { docId, presenceId });
+        return false;
+      }
     }
-    this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    const prevStream = this.app.wsMap[collection + docId][presenceId];
+    this.app.wsMap[ottype + docId] = this.app.wsMap[ottype + docId] || {};
+    const prevStream = this.app.wsMap[ottype + docId][presenceId];
     if (!prevStream) {
       const ws = new EventEmitter();
-      const mockStream = new MockSocketStream(ws, { app: this.app }, { presenceId, docId, collection });
-      this.app.wsMap[collection + docId][presenceId] = mockStream;
+      const mockStream = new MockSocketStream(ws, { app: this.app }, { presenceId, docId, ottype });
+      this.app.wsMap[ottype + docId][presenceId] = mockStream;
       this.app.otLog('[service] [listen] 挂载实例  ', { docId, presenceId });
       this.app.backend.listen(mockStream);
     }
     return true;
   }
-  async checkInItDoc({ collection, docId }) {
-    if (!this.app.wsMap[collection + docId]) {
-      const success = await this.initDoc({ collection, docId });
+  async checkInItDoc({ ottype, docId }) {
+    if (!this.app.wsMap[ottype + docId]) {
+      const success = await this.initDoc({ docId });
       return !!success;
     }
     return true;
   }
-  hasSubscribed({ presenceId, collection, docId }) {
-    const combineId = collection + docId;
+  hasSubscribed({ presenceId, ottype, docId }) {
+    const combineId = ottype + docId;
     return this.app.wsMap[combineId] && this.app.wsMap[combineId][presenceId];
   }
   // 销毁客户端连接
-  async leave({ presenceId, collection = 'zhishu', docId }) {
-    // this.app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
-    // this.app.wsMap[collection + docId] = this.app.wsMap[collection + docId] || {};
-    // const stream = this.app.wsMap[collection + docId][presenceId];
-    // if (stream) {
-    //   stream.destroy();
-    //   delete this.app.wsMap[collection + docId][presenceId];
-    //   console.log('[service] [leave] 检查订阅数 ', Object.keys(this.app.wsMap[collection + docId]).length);
-    //   if (Object.keys(this.app.wsMap[collection + docId]).length === 0) {
-    //     // 当当前 docID 没有客户端时，清空 op、snapshot缓存
-    //     this.app.lru.get('snapshot').del(docId);
-    //     this.app.lru.get('ops').del(docId);
-    //     this.app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
-    //     delete this.app.wsMap[collection + docId];
-    //   }
-    //   this.app.otLog('[service] [leave] 销毁订阅流 ', { docId, presenceId });
-    // }
-    this.app.handleUserLeave({ presenceId, docId, collection });
+  async leave({ presenceId, ottype, docId }) {
+    this.app.handleUserLeave({ presenceId, docId, ottype });
   }
   // 将消息转发给shareDB
-  async emitMessage({ data: op, presenceId, collection, docId }) {
-    const combineId = collection + docId;
+  async emitMessage({ data: op, presenceId, ottype, docId }) {
+    const combineId = ottype + docId;
     if (combineId in this.app.wsMap && this.app.wsMap[combineId][presenceId]) {
-      this.app.wsMap[collection + docId][presenceId].ws.emit("message", op);
+      this.app.wsMap[combineId][presenceId].ws.emit("message", op);
     } else {
       this.app.otError('[service] [emitMessage] 本机未订阅该客户端 ', { docId, presenceId }, { docId, presenceId });
       this.app.otError('[service] [emitMessage] 忽略该条消息 ', { docId, presenceId }, op);
     }
   }
   // 初始化文档内容
-  async initDoc({ collection, docId }) {
+  async initDoc({ docId }) {
     const connection = this.app.backend.connect();
-    const doc = Promise.promisifyAll(connection.get(collection, docId));
+    const doc = Promise.promisifyAll(connection.get('zhishu', docId));
     try {
       await doc.fetchAsync();
     } catch (error) {

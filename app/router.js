@@ -8,6 +8,7 @@ module.exports = app => {
 
   if (app.config.env === 'local') {
     router.post('/', controller.home.index);
+    router.get('/test', controller.home.testLru);
   }
   // router.post('/listen', controller.home.listen);
   router.get('/health', controller.home.health);

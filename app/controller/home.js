@@ -52,11 +52,27 @@ class HomeController extends Controller {
     }
   }
 
+  async testLru() {
+    try {
+      const success1 = this.app.lru.get('snapshot').set('sheetId', { test: 'test Text' });
+
+      this.ctx.body = {
+        data: success1,
+        code: 0,
+      };
+    } catch (error) {
+      this.ctx.body = {
+        data: error.message,
+        code: -1,
+      };
+    }
+  }
+
   async leave() {
     try {
-      const { presenceId, docId } = this.ctx.request.body;
+      const { presenceId, docId, collection } = this.ctx.request.body;
       this.app.otLog('[controller] [leave] 手动触发用户断连 ', { docId, presenceId });
-      await this.service.ot.leave({ presenceId, collection: 'zhishu', docId });
+      await this.service.ot.leave({ presenceId, collection, docId });
       this.ctx.body = {
         code: 0,
         message: '操作成功',
