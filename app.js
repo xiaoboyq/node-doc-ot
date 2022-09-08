@@ -54,6 +54,12 @@ module.exports = app => {
         // 当当前 docID 没有客户端时，清空 op、snapshot缓存
         app.lru.get('snapshot').del(docId);
         app.lru.get('ops').del(docId);
+        if (ottype === 'xls') {
+          // 找到 xls 下的所有 sheets
+          const sheets = app.lru.get('xlsSheet').get(docId);
+          // 删除 sheets 快照缓存
+          sheets.foreach(sheetId => app.lru.get('snapshot').del(sheetId));
+        }
         app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete app.wsMap[ottype + docId];
       }

@@ -17,7 +17,7 @@ const OTType = {
  * @param { number } ottype OT 类型：OTType
  * @return {string} bool
  */
-exports.receive = async function(docId, presenceId, data, ottype) {
+exports.receive = async function(docId, presenceId, data, ottype = 1) {
   try {
     const message = JSON.parse(data || {});
     this.app.otLog(`[dubbo] [receive] 接收客户端消息 ottype = ${ottype}`, { docId, presenceId }, this.helper.omit(message, [ 'op' ]));
@@ -59,7 +59,7 @@ exports.receive = async function(docId, presenceId, data, ottype) {
  * @param {string} docId 文档ID
  * @param {number} ottype
  */
-exports.create = async function(docId, ottype) {
+exports.create = async function(docId, ottype = 1) {
   this.app.otLog('[dubbo] [create] 初始化文档 ', { docId });
   const docContent = await this.service.ot.initDoc({ docId });
   if (!docContent) {
@@ -83,7 +83,7 @@ exports.create = async function(docId, ottype) {
  * @param { number } ottype
  * @return {string} bool
  */
-exports.leave = async function(docId, presenceId, ottype) {
+exports.leave = async function(docId, presenceId, ottype = 1) {
   this.app.otLog('[dubbo] [leave] 用户断连 ', { docId, presenceId });
   try {
     await this.service.ot.leave({ presenceId, ottype: OTType[ottype], docId });
@@ -102,7 +102,7 @@ exports.leave = async function(docId, presenceId, ottype) {
 };
 
 // dubbo 健康检测
-exports.ping = async function(docId, presenceId, ottype) {
+exports.ping = async function(docId, presenceId, ottype = 1) {
   const subscribed = this.service.ot.hasSubscribed({ docId, presenceId, ottype: OTType[ottype] });
   if (!subscribed) {
     // 进行 客户端连接注册
@@ -131,7 +131,7 @@ exports.ping = async function(docId, presenceId, ottype) {
  * @param {number} ottype ot 类型
  * @return
  */
-exports.revert = async function(docId, ottype) {
+exports.revert = async function(docId, ottype = 1) {
   // 清空缓存
   // TODO 轻表格的快照索引： docId + sheetId
   const idx = OTType[ottype] === 'doc' ? 'zhishu' + docId : docId;

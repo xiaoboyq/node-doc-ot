@@ -65,12 +65,17 @@ module.exports = appInfo => {
     clients: {
       // 缓存快照
       snapshot: {
-        max: 100,
-        maxAge: 1000 * 60 * 10, // 10 min cache
+        max: 2000,
+        maxAge: 1000 * 60 * 60, // 10 min cache
       },
       // 缓存历史ops
       ops: {
-        max: 1000,
+        max: 10000,
+        maxAge: 1000 * 60 * 60, // 60 min cache
+      },
+      // 缓存 xls sheet 映射关系
+      xlsSheet: {
+        max: 2000,
         maxAge: 1000 * 60 * 60, // 60 min cache
       },
     },

@@ -68,10 +68,29 @@ class OTServer extends Service {
       this.app.otError('[service] [emitMessage] 本机未订阅该客户端 ', { docId, presenceId }, { docId, presenceId });
       this.app.otError('[service] [emitMessage] 忽略该条消息 ', { docId, presenceId }, op);
     }
+    this.handleSubscribeOp({ op, ottype });
+  }
+  // 在订阅时 记录 xls - sheet 映射关系
+  handleSubscribeOp({ op, ottype }) {
+    if (ottype === 'xls' && op.a === 's') {
+      const sheetId = op.d;
+      const xlsId = op.c;
+      this.cacheXlsSheetRelation(xlsId, sheetId);
+    }
+  }
+  // 轻表格逻辑 —— 记录 xls / sheets 的映射关系
+  cacheXlsSheetRelation(xlsId, sheetId) {
+    const sheets = this.app.lru.get('xlsSheet').get(xlsId) || [];
+    if (sheets.some(s => s === sheetId)) {
+      return;
+    }
+    sheets.push(sheetId);
+    this.app.lru.get('xlsSheet').set(xlsId, sheets);
   }
   // 初始化文档内容
   async initDoc({ docId }) {
     const connection = this.app.backend.connect();
+    // todo 轻文档的collection为 zhishu
     const doc = Promise.promisifyAll(connection.get('zhishu', docId));
     try {
       await doc.fetchAsync();
