@@ -10,7 +10,7 @@
     "@boss/sharedb": "3.1.0-beta.5",
     "@boss/slate": "^0.77.2",
     "@boss/slate-ot": "^0.1.6",
-    "@bzl/sheet-ottype": "0.0.14",
+    "@bzl/sheet-ottype": "0.0.17",
     "axios": "^0.26.1",
     "bluebird": "^3.7.2",
     "egg": "^2.15.1",
