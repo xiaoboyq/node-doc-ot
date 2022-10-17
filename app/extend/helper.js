@@ -16,5 +16,12 @@ module.exports = {
     }
     return newObj;
   },
+  desensitizeOp(op) {
+    return {
+      a: op.a,
+      x: op.x,
+
+    };
+  },
 
 };

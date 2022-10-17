@@ -42,6 +42,10 @@ module.exports = app => {
       }
     });
   });
+  // backend.emit('submitRequestEnd', error, request);
+  app.backend.on('submitRequestEnd', function(error, request) {
+    app.otLog('[sharedb] 提交op ', { docId: request.id, presenceId: request.op.x.source }, { error, op: app.helper.omit(request.op, [ 'op' ]) });
+  });
 
   app.handleUserLeave = ({ docId, presenceId, ottype }) => {
     app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
