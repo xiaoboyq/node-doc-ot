@@ -23,5 +23,14 @@ module.exports = {
 
     };
   },
+  savePick(obj, path) {
+    let value = obj;
+    const pathArr = path.split('.');
+    const res = pathArr.every(attr => {
+      value = value[attr];
+      return value !== null && value !== undefined;
+    });
+    return res ? value : undefined;
+  },
 
 };

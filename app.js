@@ -9,6 +9,7 @@ const getDubbo = require('./lib/dubbo');
 slateType.transformPresence = p => p;
 ShareDB.types.register(slateType);
 ShareDB.types.register(sheetType);
+const helper = require('./app/extend/helper');
 
 module.exports = app => {
   // 用于存储 订阅 DOC 的 stream 对象
@@ -44,7 +45,7 @@ module.exports = app => {
   });
   // backend.emit('submitRequestEnd', error, request);
   app.backend.on('submitRequestEnd', function(error, request) {
-    app.otLog('[sharedb] 提交op ', { docId: request.id, presenceId: request.op.x.source }, { error, op: app.helper.omit(request.op, [ 'op' ]) });
+    app.otLog('[sharedb] 提交op ', { docId: request.id }, { error, op: helper.omit(request.op, [ 'op' ]) });
   });
 
   app.handleUserLeave = ({ docId, presenceId, ottype }) => {
