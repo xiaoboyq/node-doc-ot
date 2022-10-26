@@ -1,0 +1,1 @@
+yarn egg-scripts stop --title=egg-server-node-ot
