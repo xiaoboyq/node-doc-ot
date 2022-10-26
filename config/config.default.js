@@ -102,6 +102,14 @@ module.exports = appInfo => {
     agent: false,
   };
 
+  //  node exporter 配置
+  exports.exporter = {
+    scrapePort: 9100,
+    scrapePath: '/metrics',
+    prefix: 'ot_',
+    defaultLabels: { env: appInfo.env },
+  };
+
   return {
     ...config,
   };
