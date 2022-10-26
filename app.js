@@ -12,6 +12,8 @@ ShareDB.types.register(sheetType);
 const helper = require('./app/extend/helper');
 
 module.exports = app => {
+
+  console.log(`========== 当前环境：${app.config.env} ===========`);
   // 用于存储 订阅 DOC 的 stream 对象
   // key: collection + docId
   // value: key: userId  value: stream
