@@ -135,14 +135,14 @@ exports.revert = async function(docId, ottype = 1) {
   // 清空缓存
   // TODO 轻表格的快照索引： sheetId +  docId
   const idx = OTType[ottype] === 'doc' ? docId + 'zhishu' : docId;
-  const success1 = this.app.lru.get('snapshot').del(idx);
-  const success2 = this.app.lru.get('ops').del(idx);
-  const success = success1 && success2;
-  this.app.otLog(`[dubbo] [revert] 历史还原 清空缓存 ${success ? '成功' : '失败'}`, { docId });
+  this.app.lru.get('snapshot').del(idx);
+  this.app.lru.get('ops').del(idx);
+
+  this.app.otLog(`[dubbo] [revert] 历史还原 清空缓存 `, { docId });
   return {
-    code: success ? 0 : 2005,
+    code: 0,
     message: '',
-    data: success,
+    data: true,
   };
 };
 
