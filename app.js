@@ -50,6 +50,7 @@ module.exports = app => {
     app.otLog('[sharedb] 提交op ', { docId: request.id }, { error, op: helper.omit(request.op, [ 'op' ]) });
   });
 
+  // 处理用户清场
   app.handleUserLeave = ({ docId, presenceId, ottype }) => {
     app.otLog('[service] [leave] 用户断连 ', { docId, presenceId });
     app.wsMap[ottype + docId] = app.wsMap[ottype + docId] || {};
@@ -58,14 +59,19 @@ module.exports = app => {
       stream.destroy();
       delete app.wsMap[ottype + docId][presenceId];
       if (Object.keys(app.wsMap[ottype + docId]).length === 0) {
-        // 当当前 docID 没有客户端时，清空 op、snapshot缓存
-        app.lru.get('snapshot').del(docId);
-        app.lru.get('ops').del(docId);
+
         if (ottype === 'xls') {
           // 找到 xls 下的所有 sheets
           const sheets = app.lru.get('xlsSheet').get(docId);
           // 删除 sheets 快照缓存
-          sheets.foreach(sheetId => app.lru.get('snapshot').del(sheetId));
+          sheets.foreach(sheetId => {
+            app.lru.get('snapshot').del(sheetId + docId);
+            app.lru.get('ops').del(sheetId + docId);
+          });
+        } else {
+          // 当当前 docID 没有客户端时，清空 op、snapshot缓存
+          app.lru.get('snapshot').del(docId + 'zhishu');
+          app.lru.get('ops').del(docId + 'zhishu');
         }
         app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete app.wsMap[ottype + docId];

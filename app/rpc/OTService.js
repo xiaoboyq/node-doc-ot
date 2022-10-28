@@ -133,8 +133,8 @@ exports.ping = async function(docId, presenceId, ottype = 1) {
  */
 exports.revert = async function(docId, ottype = 1) {
   // 清空缓存
-  // TODO 轻表格的快照索引： docId + sheetId
-  const idx = OTType[ottype] === 'doc' ? 'zhishu' + docId : docId;
+  // TODO 轻表格的快照索引： sheetId +  docId
+  const idx = OTType[ottype] === 'doc' ? docId + 'zhishu' : docId;
   const success1 = this.app.lru.get('snapshot').del(idx);
   const success2 = this.app.lru.get('ops').del(idx);
   const success = success1 && success2;
