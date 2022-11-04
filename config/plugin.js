@@ -20,3 +20,8 @@ exports.lru = {
   enable: true,
   package: 'egg-lru',
 };
+
+exports.exporter = {
+  enable: true,
+  package: 'egg-exporter',
+};
