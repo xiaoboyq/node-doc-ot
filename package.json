@@ -23,8 +23,7 @@
     "egg-scripts": "^2.11.0",
     "immer": "^9.0.14",
     "moment": "^2.29.3",
-    "node-zookeeper-dubbo": "^3.0.15",
-    "node-zookeeper-dubbo-plus": "^3.0.16",
+    "@bzl/node-zookeeper-dubbo-plus": "0.0.3",
     "short-uuid": "^4.2.0",
     "sofa-node": "^1.0.1",
     "sofa-rpc-node": "^2.2.2"
