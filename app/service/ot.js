@@ -85,7 +85,7 @@ class OTServer extends Service {
       return;
     }
     sheets.push(sheetId);
-    this.app.lru.get('xlsSheet').set(xlsId, sheets);
+    this.app.lru.get('xlsSheet').set(xlsId, [ ...sheets ]);
   }
   // 初始化文档内容
   async initDoc({ docId }) {

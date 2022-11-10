@@ -62,7 +62,8 @@ module.exports = app => {
 
         if (ottype === 'xls') {
           // 找到 xls 下的所有 sheets
-          const sheets = app.lru.get('xlsSheet').get(docId);
+          const sheets = app.lru.get('xlsSheet').get(docId) || [];
+          console.log('>>>>>>>>>> leave sheets >>>>>>>>', sheets);
           // 删除 sheets 快照缓存
           sheets.foreach(sheetId => {
             app.lru.get('snapshot').del(sheetId + docId);

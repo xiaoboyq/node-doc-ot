@@ -53,10 +53,12 @@ class HomeController extends Controller {
 
   async testLru() {
     try {
-      const success1 = this.app.lru.get('snapshot').set('sheetId', { test: 'test Text' });
+      this.app.lru.get('xlsSheet').set('xlsId', [ 'sheet1', 'sheet2' ]);
+      const sheets = this.app.lru.get('xlsSheet').get('xlsId');
+
 
       this.ctx.body = {
-        data: success1,
+        data: sheets,
         code: 0,
       };
     } catch (error) {
