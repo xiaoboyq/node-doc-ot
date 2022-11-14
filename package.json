@@ -9,7 +9,7 @@
   "dependencies": {
     "@boss/h-table": "1.0.20-beta",
     "@boss/h-types": "^1.1.23-beta.1",
-    "@boss/sharedb": "3.1.0-beta.6",
+    "@boss/sharedb": "3.1.0-beta.7",
     "@boss/slate": "^0.78.25-beta",
     "@boss/slate-ot": "0.1.15",
     "@bzl/sheet-ottype": "0.0.48",
