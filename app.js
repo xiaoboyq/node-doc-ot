@@ -66,13 +66,13 @@ module.exports = app => {
           console.log('>>>>>>>>>> leave sheets >>>>>>>>', sheets);
           // 删除 sheets 快照缓存
           sheets.foreach(sheetId => {
-            app.lru.get('snapshot').del(sheetId + docId);
-            app.lru.get('ops').del(sheetId + docId);
+            app.lru.get('snapshot').del(sheetId);
+            app.lru.get('ops').del(sheetId);
           });
         } else {
           // 当当前 docID 没有客户端时，清空 op、snapshot缓存
-          app.lru.get('snapshot').del(docId + 'zhishu');
-          app.lru.get('ops').del(docId + 'zhishu');
+          app.lru.get('snapshot').del(`doc#${docId}`);
+          app.lru.get('ops').del(`doc#${docId}`);
         }
         app.otLog('[service] [leave] 清空缓存 ', { docId, presenceId });
         delete app.wsMap[ottype + docId];

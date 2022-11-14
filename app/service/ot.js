@@ -73,7 +73,7 @@ class OTServer extends Service {
   // 在订阅时 记录 xls - sheet 映射关系
   handleSubscribeOp({ op, ottype }) {
     if (ottype === 'xls' && op.a === 's') {
-      const sheetId = op.d;
+      const sheetId = op.d; // 带有 xls# 前缀
       const xlsId = op.c;
       this.cacheXlsSheetRelation(xlsId, sheetId);
     }
