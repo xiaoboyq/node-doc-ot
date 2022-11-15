@@ -91,7 +91,7 @@ class OTServer extends Service {
   async initDoc({ docId }) {
     const connection = this.app.backend.connect();
     // todo 轻文档的collection为 zhishu
-    const doc = Promise.promisifyAll(connection.get('zhishu', docId));
+    const doc = Promise.promisifyAll(connection.get('zhishu', `doc#${docId}`));
     try {
       await doc.fetchAsync();
     } catch (error) {
