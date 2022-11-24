@@ -104,7 +104,7 @@ module.exports = appInfo => {
 
   //  node exporter 配置
   exports.exporter = {
-    scrapePort: 9100,
+    scrapePort: 9090,
     scrapePath: '/metrics',
     prefix: 'ot_',
     defaultLabels: { env: appInfo.env },
