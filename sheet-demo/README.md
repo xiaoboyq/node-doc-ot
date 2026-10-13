@@ -22,3 +22,7 @@ Open the same address twice. Set a cell value and press Enter/提交单元格; e
 - Current canvas paints the first visible rows/columns; scroll virtualization, drag selection, merged cells, clipboard, durable snapshots and robust reconnect/rebase tests remain future integration work.
 - This code has **not been validated with an end-to-end browser run**. Run `npm run build` and open two tabs before treating it as complete.
 - The repository currently includes private and historical dependency packages; isolate this demo from the production deployment and do not publish private credentials/configurations.
+
+## Validation commands
+
+Run `npm run build` and `npm test` before manual two-tab testing. See [VALIDATION.md](./VALIDATION.md) for expected scenarios and unresolved implementation gaps.
