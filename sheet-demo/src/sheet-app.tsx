@@ -54,15 +54,20 @@ function CanvasSheet({sheet,selected,onSelect,onDoubleClick}:{
      const c=Math.floor((x-HW+scroll.left)/CW),r=Math.floor((y-HH+scroll.top)/RH);
      if(r>=0&&r<ROWS&&c>=0&&c<COLS)onSelect([r,c]);
    };
-   zr.on('click',hit);
-   zr.on('dblclick',onDoubleClick);
    const resize=new ResizeObserver(draw);
    resize.observe(stage.current);
    draw();
-   return()=>{resize.disconnect();zr.off('click',hit);zr.off('dblclick',onDoubleClick);zr.dispose();};
- },[sheet,selected,scroll,onSelect,onDoubleClick]);
+   return()=>{resize.disconnect();zr.dispose();};
+ },[sheet,selected,scroll]);
+ const hit=(e:React.MouseEvent<HTMLDivElement>)=>{
+   const bounds=e.currentTarget.getBoundingClientRect();
+   const x=e.clientX-bounds.left,y=e.clientY-bounds.top;
+   if(x<HW||y<HH)return;
+   const c=Math.floor((x-HW+scroll.left)/CW),r=Math.floor((y-HH+scroll.top)/RH);
+   if(r>=0&&r<ROWS&&c>=0&&c<COLS)onSelect([r,c]);
+ };
  return <div className="sheet-viewport" ref={host} tabIndex={0} aria-label="表格滚动区域">
-   <div className="sheet-scroll" onScroll={e=>setScroll({top:e.currentTarget.scrollTop,left:e.currentTarget.scrollLeft})}>
+   <div className="sheet-scroll" onClick={hit} onDoubleClick={onDoubleClick} onScroll={e=>setScroll({top:e.currentTarget.scrollTop,left:e.currentTarget.scrollLeft})}>
      <div style={{width:HW+COLS*CW,height:HH+ROWS*RH}} />
    </div>
    <div className="sheet-stage" ref={stage}/>
