@@ -1,5 +1,8 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import * as zrender from 'zrender';
+import CanvasPainter from 'zrender/lib/canvas/Painter';
+// Explicit registration survives production tree shaking.
+zrender.registerPainter('canvas',CanvasPainter);
 import {connect,getCell,type SheetSnapshot,type SheetOp} from './sharedb-client';
 
 type Point=[number,number];
@@ -11,10 +14,16 @@ const contains=(range:Range,r:number,c:number)=>c>=range[0]&&c<=range[2]&&r>=ran
 const overlaps=(a:Range,b:Range)=>a[0]<=b[2]&&a[2]>=b[0]&&a[1]<=b[3]&&a[3]>=b[1];
 
 function CanvasSheet({sheet,selected,anchor,onSelect,onEdit}:{sheet:SheetSnapshot|null;selected:Point;anchor:Point;onSelect:(p:Point,extend:boolean)=>void;onEdit:()=>void}){
- const stage=useRef<HTMLDivElement>(null),viewport=useRef<HTMLDivElement>(null);
+ const stage=useRef<HTMLDivElement>(null),viewport=useRef<HTMLDivElement>(null),scroller=useRef<HTMLDivElement>(null);
  const zr=useRef<zrender.ZRenderType|null>(null),dragging=useRef(false);
  const [scroll,setScroll]=useState({top:0,left:0}),[size,setSize]=useState({width:0,height:0});
  const rows=sheet?.config.row??200,cols=sheet?.config.column??26;
+ useEffect(()=>{
+  const el=scroller.current;if(!el)return;
+  const top=selected[0]*RH,left=selected[1]*CW,h=el.clientHeight-HH,w=el.clientWidth-HW;
+  if(top<el.scrollTop)el.scrollTop=top;else if(top+RH>el.scrollTop+h)el.scrollTop=top+RH-h;
+  if(left<el.scrollLeft)el.scrollLeft=left;else if(left+CW>el.scrollLeft+w)el.scrollLeft=left+CW-w;
+ },[selected]);
  const cells=useMemo(()=>new Map(sheet?.data.rows.flatMap(row=>(row.children??[]).map(cell=>[`${row.index}:${cell.index}`,cell.meta?.value] as const))),[sheet]);
  useEffect(()=>{
   if(!stage.current)return;
@@ -44,13 +53,15 @@ function CanvasSheet({sheet,selected,anchor,onSelect,onEdit}:{sheet:SheetSnapsho
     rect(body,x(m[0]),y(m[1]),width,height,'#fff');
     const value=cells.get(`${m[1]}:${m[0]}`);if(value!=null)text(body,x(m[0])+8,y(m[1])+RH/2,String(value),'left',width-16);
    }
-   const range=rangeOf(anchor,selected);
+   let range=rangeOf(anchor,selected);
+   for(const m of merges)if(overlaps(range,m))range=[Math.min(range[0],m[0]),Math.min(range[1],m[1]),Math.max(range[2],m[2]),Math.max(range[3],m[3])];
    body.add(new zrender.Rect({shape:{x:x(range[0])+1,y:y(range[1])+1,width:(range[2]-range[0]+1)*CW-2,height:(range[3]-range[1]+1)*RH-2},style:{fill:'rgba(52,121,230,.08)',stroke:'#3479e6',lineWidth:2},silent:true}));
    const headers=new zrender.Group();canvas.add(headers);
    rect(headers,0,0,w,HH,'#f0f3f9');rect(headers,0,0,HW,h,'#f0f3f9');
    for(let c=colStart;c<colEnd;c++){rect(headers,x(c),0,CW,HH,'#f0f3f9');text(headers,x(c)+CW/2,HH/2,label(c),'center');}
    for(let r=rowStart;r<rowEnd;r++){rect(headers,0,y(r),HW,RH,'#f0f3f9');text(headers,HW/2,y(r)+RH/2,String(r+1),'center');}
    rect(headers,0,0,HW,HH,'#f0f3f9');
+   stage.current?.setAttribute('data-first-row',String(rowStart));
    stage.current?.setAttribute('data-rendered-cells',String(Math.max(0,rowEnd-rowStart)*Math.max(0,colEnd-colStart)));
   });return()=>cancelAnimationFrame(frame);
  },[sheet,cells,selected,anchor,scroll,size,rows,cols]);
@@ -67,7 +78,7 @@ function CanvasSheet({sheet,selected,anchor,onSelect,onEdit}:{sheet:SheetSnapsho
   const delta:Record<string,Point>={ArrowDown:[1,0],ArrowUp:[-1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]};
   const d=delta[e.key];if(d){e.preventDefault();onSelect([Math.max(0,Math.min(rows-1,selected[0]+d[0])),Math.max(0,Math.min(cols-1,selected[1]+d[1]))],e.shiftKey);}
  }}>
-  <div className="sheet-scroll" onPointerDown={e=>{const p=hit(e);if(!p)return;dragging.current=true;e.currentTarget.setPointerCapture(e.pointerId);viewport.current?.focus();onSelect(p,e.shiftKey);}}
+  <div className="sheet-scroll" ref={scroller} onPointerDown={e=>{const p=hit(e);if(!p)return;dragging.current=true;e.currentTarget.setPointerCapture(e.pointerId);viewport.current?.focus();onSelect(p,e.shiftKey);}}
    onPointerMove={e=>{if(dragging.current){const p=hit(e);if(p)onSelect(p,true);}}}
    onPointerUp={()=>{dragging.current=false;}} onPointerCancel={()=>{dragging.current=false;}} onDoubleClick={onEdit}
    onScroll={e=>setScroll({top:e.currentTarget.scrollTop,left:e.currentTarget.scrollLeft})}>
@@ -85,7 +96,8 @@ export function SheetApp(){
  const sheetId=(new URLSearchParams(location.search).get('sheet')||'demo').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,64)||'demo';
  useEffect(()=>{
   const c=connect(sheetId,setStatus);connection.current=c;
-  const update=()=>{setSheet(c.doc.data?structuredClone(c.doc.data):null);setVersion(c.doc.version??0);};
+  let frame:number|null=null;
+  const update=()=>{if(frame!==null)return;frame=requestAnimationFrame(()=>{frame=null;setSheet(c.doc.data?structuredClone(c.doc.data):null);setVersion(c.doc.version??0);});};
   const onOp=(op:SheetOp[],source:boolean)=>{
    // Follow logical cells after local or remote structural edits.
    for(const o of op)if(o.type==='insert-row'||o.type==='insert-col'){
@@ -93,12 +105,16 @@ export function SheetApp(){
     for(const ref of [selection,anchorRef]){const p=[...ref.current] as Point;if(p[axis]>=o.at)p[axis]+=o.count;ref.current=p;}
     setSelected(selection.current);setAnchor(anchorRef.current);
    }
+   for(const o of op)if(o.type==='update-merge'&&o.newV){
+    const m=o.newV as Range;for(const ref of [selection,anchorRef])if(contains(m,...ref.current))ref.current=[m[1],m[0]];
+    setSelected(selection.current);setAnchor(anchorRef.current);
+   }
    update();setEvents(v=>[(source?'本地 ':'远程 ')+JSON.stringify(op).slice(0,200),...v].slice(0,15));
   };
   c.doc.on('load',update);c.doc.on('op',onOp);c.doc.on('no write pending',update);
   const error=(err:Error)=>setStatus('协同错误：'+err.message);c.doc.on('error',error);
   if(c.doc.data)update();
-  return()=>{c.doc.removeListener('load',update);c.doc.removeListener('op',onOp);c.doc.removeListener('no write pending',update);c.doc.removeListener('error',error);c.close();connection.current=null;};
+  return()=>{if(frame!==null)cancelAnimationFrame(frame);c.doc.removeListener('load',update);c.doc.removeListener('op',onOp);c.doc.removeListener('no write pending',update);c.doc.removeListener('error',error);c.close();connection.current=null;};
  },[sheetId]);
  useEffect(()=>{if(!dirty.current)setEdit(String(getCell(sheet as SheetSnapshot,...selected)?.value??''));},[sheet,selected]);
  const submit=(ops:SheetOp[])=>{

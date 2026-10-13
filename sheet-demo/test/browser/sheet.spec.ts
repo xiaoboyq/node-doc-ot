@@ -13,8 +13,8 @@ test('two windows edit, insert, preserve draft, merge/split and virtualize',asyn
  await select(page,1,1);await select(page,2,2,true);await expect(page.getByTestId('selection')).toHaveText('B2:C3');
  await page.getByRole('button',{name:'合并',exact:true}).click();await expect(b.locator('aside')).toContainText('update-merge');
  await select(b,2,2);await expect(b.getByTestId('selection')).toHaveText('B2');
- await b.getByRole('button',{name:'拆分'}).click();await select(page,2,2);await expect(page.getByTestId('selection')).toHaveText('C3');
- await page.locator('.sheet-scroll').evaluate(el=>{el.scrollTop=5500;el.scrollLeft=1800;});await expect.poll(()=>page.locator('.sheet-stage').getAttribute('data-rendered-cells')).toBeTruthy();
+ const beforeSplit=await b.getByTestId('version').textContent();await b.getByRole('button',{name:'拆分'}).click();await expect(b.getByTestId('version')).not.toHaveText(beforeSplit!);await expect(page.getByTestId('version')).toHaveText((await b.getByTestId('version').textContent())!);await select(page,2,2);await expect(page.getByTestId('selection')).toHaveText('C3');
+ await page.locator('.sheet-scroll').evaluate(el=>{el.scrollTop=5500;el.scrollLeft=1800;});await expect.poll(async()=>Number(await page.locator('.sheet-stage').getAttribute('data-first-row'))).toBeGreaterThan(150);
  const rendered=Number(await page.locator('.sheet-stage').getAttribute('data-rendered-cells'));expect(rendered).toBeLessThan(400);
  await page.screenshot({path:'test-results/sheet-virtualized.png'});expect(errors).toEqual([]);
 });
@@ -69,4 +69,16 @@ for(const first of ['insert','edit'])test(`concurrent browser OP transform, ${fi
  await expect(b.getByTestId('selection')).toHaveText('E4');await select(a,3,4);await expect(a.getByLabel('单元格内容')).toHaveValue('concurrent value');await expect(b.getByLabel('单元格内容')).toHaveValue('concurrent value');
  await expect.poll(async()=>await a.getByTestId('version').textContent()).toEqual(await b.getByTestId('version').textContent());
  }finally{await ca.close();await cb.close();}
+});
+test('drag selection, keyboard editing, IME guard and stable Canvas instance',async({page})=>{
+ await ready(page,'input-'+Date.now());const grid=page.locator('.sheet-scroll'),box=await grid.boundingBox();if(!box)throw Error('Missing grid');
+ await page.locator('canvas').evaluate(el=>el.dataset.instance='original');
+ await page.mouse.move(box.x+52+20,box.y+34+14);await page.mouse.down();await page.mouse.move(box.x+52+112+20,box.y+34+29+14);await page.mouse.up();
+ await expect(page.getByTestId('selection')).toHaveText('A1:B2');
+ await page.getByLabel('表格滚动区域').press('ArrowRight');await expect(page.getByTestId('selection')).toHaveText('C2');
+ await page.getByLabel('表格滚动区域').press('Enter');await expect(page.getByLabel('单元格内容')).toBeFocused();await page.getByLabel('单元格内容').fill('中文输入');
+ await page.getByLabel('单元格内容').dispatchEvent('keydown',{key:'Enter',code:'Enter',isComposing:true});await expect(page.getByTestId('version')).toHaveText('Version：1');
+ await page.getByLabel('单元格内容').press('Enter');await expect(page.getByTestId('version')).toHaveText('Version：2');
+ await page.getByLabel('单元格内容').fill('取消修改');await page.getByLabel('单元格内容').press('Escape');await expect(page.getByLabel('单元格内容')).toHaveValue('中文输入');
+ await expect(page.locator('canvas')).toHaveAttribute('data-instance','original');
 });
