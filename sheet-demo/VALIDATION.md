@@ -17,7 +17,7 @@ Open http://localhost:5173/?sheet=demo in two tabs. Check:
 2. Insert a row above row 1; existing B2 data moves to B3 on both.
 3. Edit the same cell simultaneously and confirm both browsers converge.
 4. Scroll vertically/horizontally and verify hit testing/editing aligns with the displayed cell.
-5. Disconnect and reconnect; currently requires a page refresh; pending edits while offline are **not guaranteed to survive**.
+5. Disconnect and reconnect; the client now attempts WebSocket reconnection using the same ShareDB Connection; confirm the socket re-subscribes and queued ops are acknowledged. Edits made while disconnected are **not guaranteed to survive a browser refresh or process crash**.
 6. Browser DevTools / TypeScript build should show no errors.
 
 Production gaps: persistent snapshot/op store; recovery strategy; IME/editor overlay; merged cells; sizing/selection; permissions and presence; real gateway integration; concurrency load tests. Never connect the demo directly to the internal Dubbo infrastructure.
