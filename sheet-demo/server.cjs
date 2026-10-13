@@ -19,7 +19,7 @@ function ensureSheet(id) { return new Promise((resolve,reject) => {
 // WebSocket messages carry original ShareDB JSON protocol; do not reimplement OT/ACK.
 wss.on('connection', async (ws, req) => {
   let sheetId = 'xls#demo';
-  try { const url = new URL(req.url, 'http://localhost'); const raw=url.searchParams.get('sheet')||'demo'; if(!/^[\\w-]{1,64}$/.test(raw)) throw Error('Invalid sheet id'); sheetId='xls#'+raw; await ensureSheet(sheetId); }
+  try { const url = new URL(req.url, 'http://localhost'); const raw=url.searchParams.get('sheet')||'demo'; if(!/^[a-zA-Z0-9_-]{1,64}$/.test(raw)) throw Error('Invalid sheet id'); sheetId='xls#'+raw; await ensureSheet(sheetId); }
   catch(error) { ws.close(1011, String(error.message).slice(0,100)); return; }
   const stream = new Duplex({objectMode:true,read(){},write(msg,_enc,done){ if(ws.readyState===WebSocket.OPEN) ws.send(JSON.stringify(msg),done); else done(new Error('WebSocket closed')); }});
   ws.on('message', raw => { try {stream.push(JSON.parse(String(raw)));} catch {ws.close(1003,'Invalid JSON');} });
