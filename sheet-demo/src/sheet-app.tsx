@@ -48,12 +48,6 @@ function CanvasSheet({sheet,selected,onSelect,onDoubleClick}:{
      if(x+CW>HW&&y+RH>HH&&x<w&&y<h)
        zr.add(new zrender.Rect({shape:{x:x+1,y:y+1,width:CW-2,height:RH-2},style:{fill:'transparent',stroke:'#3479e6',lineWidth:2},silent:true}));
    };
-   const hit=(e:any)=>{
-     const x=e.offsetX,y=e.offsetY;
-     if(x<HW||y<HH)return;
-     const c=Math.floor((x-HW+scroll.left)/CW),r=Math.floor((y-HH+scroll.top)/RH);
-     if(r>=0&&r<ROWS&&c>=0&&c<COLS)onSelect([r,c]);
-   };
    const resize=new ResizeObserver(draw);
    resize.observe(stage.current);
    draw();
