@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
-    "server": "node server.cjs"
+    "server": "node server.cjs",
+    "test": "node --test test/*.test.cjs"
   },
   "dependencies": {
     "@bzl/sheet-js": "file:../node_modules/@bzl/sheet-js",
