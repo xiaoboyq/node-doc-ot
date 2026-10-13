@@ -7,22 +7,25 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "server": "node server.cjs",
-    "test": "node --test test/*.test.cjs"
+    "test": "node --test test/*.test.cjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@boss/sharedb": "file:../node_modules/@boss/sharedb",
     "@bzl/sheet-js": "file:../node_modules/@bzl/sheet-js",
     "@bzl/sheet-ottype": "file:../node_modules/@bzl/sheet-ottype",
-    "@boss/sharedb": "file:../node_modules/@boss/sharedb",
+    "@types/node": "^22.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "@types/node": "^22.0.0",
     "@types/ws": "^8.5.0",
+    "events": "^3.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "ws": "^8.18.0",
     "zrender": "^5.6.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
     "typescript": "^5.7.3",
     "vite": "^6.0.0"
   }

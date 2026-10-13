@@ -2,7 +2,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const ShareDB = require('@boss/sharedb');
-const { SheetOTType } = require('@bzl/sheet-ottype');
+const { SheetOTType } = require('../ot-type.cjs');
 ShareDB.types.register(SheetOTType);
 function asPromise(run) { return new Promise((resolve,reject)=>run(err=>err?reject(err):resolve())); }
 test('SheetOTType applies update-cell and transforms insert-row', async () => {
